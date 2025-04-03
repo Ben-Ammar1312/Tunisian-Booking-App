@@ -1,0 +1,6 @@
+@Darna_HostAddress = http://localhost:5058
+
+GET {{Darna_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###

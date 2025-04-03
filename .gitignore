@@ -1,0 +1,50 @@
+# === GLOBAL OS / ENVIRONMENT ===
+.DS_Store
+Thumbs.db
+*.log
+*.swp
+*.swo
+*.tmp
+.idea/
+.vscode/
+.env
+
+# === ANGULAR (Front-Angular) ===
+/Front-Angular/node_modules/
+/Front-Angular/dist/
+/Front-Angular/.angular/
+/Front-Angular/.env
+/Front-Angular/.output/
+
+# === .NET (Back-.Net - handles nested Darna/Darna) ===
+Back-.Net/**/bin/
+Back-.Net/**/obj/
+Back-.Net/**/.vs/
+Back-.Net/**/*.user
+Back-.Net/**/*.suo
+Back-.Net/**/*.userosscache
+Back-.Net/**/*.sln.docstates
+
+# === ANDROID (Android-App) ===
+/Android-App/.gradle/
+/Android-App/.idea/
+/Android-App/local.properties
+/Android-App/.DS_Store
+/Android-App/build/
+/Android-App/captures/
+/Android-App/.externalNativeBuild/
+/Android-App/*.iml
+
+# === GIT ===
+*.orig
+*.rej
+*.bak
+
+# === BACKUP / MAC TRASH ===
+ehthumbs.db
+Desktop.ini
+._*
+.Spotlight-V100
+.Trashes
+*.~lock.*
+~$*

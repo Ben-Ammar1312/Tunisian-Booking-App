@@ -1,0 +1,25 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.13.35919.96 d17.13
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Darna", "Darna\Darna.csproj", "{52DAAEC9-9845-470F-B53A-58DF1760FBAB}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{52DAAEC9-9845-470F-B53A-58DF1760FBAB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{52DAAEC9-9845-470F-B53A-58DF1760FBAB}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{52DAAEC9-9845-470F-B53A-58DF1760FBAB}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{52DAAEC9-9845-470F-B53A-58DF1760FBAB}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {04318E8F-C984-4062-8E08-43C16E4F2611}
+	EndGlobalSection
+EndGlobal
