@@ -1,0 +1,75 @@
+
+.signup-container {
+  min-height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: linear-gradient(135deg, #0a0a0a, #0f0e0f, #474649);
+  padding: 20px;
+}
+
+.signup-card {
+  background-color: #fff;
+  width: 400px;
+  padding: 2rem;
+  border-radius: 8px;
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+  text-align: center;
+}
+
+.signup-card h2 {
+  margin-bottom: 1.5rem;
+  color: #333;
+}
+
+.signup-card form {
+  display: flex;
+  flex-direction: column;
+  text-align: left;
+}
+
+.signup-card form label {
+  margin: 0.5rem 0 0.25rem;
+  font-weight: bold;
+  color: #555;
+}
+
+.signup-card form input,
+.signup-card form select {
+  padding: 0.75rem;
+  margin-bottom: 1rem;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  font-size: 1rem;
+}
+
+.signup-card form button {
+  background-color: #383335;
+  color: #fff;
+  border: none;
+  padding: 0.75rem;
+  border-radius: 4px;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.signup-card form button:hover {
+  background-color: #e60063;
+}
+
+.signup-card form button:disabled {
+  background-color: #ccc;
+  cursor: not-allowed;
+}
+
+/* Style pour le message de succès */
+.success-message {
+  background-color: #d4edda;
+  color: #155724;
+  border: 1px solid #c3e6cb;
+  padding: 0.75rem;
+  margin-bottom: 1rem;
+  border-radius: 4px;
+  text-align: center;
+}

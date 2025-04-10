@@ -1,1 +1,33 @@
+.container {
+  margin-top: 50px;
+}
+
+.card {
+  padding: 20px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  border-radius: 10px;
+}
+
+.user-image {
+  width: 80px;
+  border-radius: 50%;
+}
+
+.form-control, .form-select {
+  border-radius: 5px;
+}
+
+.btn-primary {
+  background-color: #007bff;
+  border: none;
+  padding: 10px;
+}
+
+.btn-primary:hover {
+  background-color: #0056b3;
+}
+
+.alert {
+  margin-top: 10px;
+}
 /* You can add global styles to this file, and also import other style files */

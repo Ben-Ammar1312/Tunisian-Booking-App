@@ -14,6 +14,15 @@ if (app.Environment.IsDevelopment())
     app.MapOpenApi();
 }
 
+// Configuration CORS pour autoriser Angular
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("AllowAngular",
+        policy => policy.WithOrigins("http://localhost:4200") // Angular tourne sur ce port
+                        .AllowAnyMethod()
+                        .AllowAnyHeader());
+});
+
 app.UseHttpsRedirection();
 
 app.UseAuthorization();

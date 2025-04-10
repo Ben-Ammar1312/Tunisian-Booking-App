@@ -1,0 +1,20 @@
+<div class="login-container">
+  <div class="login-card">
+    <h2>Connexion</h2>
+
+    <div *ngIf="errorMessage" class="error-message">
+      {{ errorMessage }}
+    </div>
+
+    <form [formGroup]="loginForm" (ngSubmit)="onSubmit()">
+      <label for="email">Email</label>
+      <input id="email" type="email" formControlName="email" placeholder="Votre email" />
+
+      <label for="password">Mot de passe</label>
+      <input id="password" type="password" formControlName="password" placeholder="Votre mot de passe" />
+
+      <button type="submit" [disabled]="!loginForm.valid">Se connecter</button>
+    </form>
+  </div>
+</div>
+

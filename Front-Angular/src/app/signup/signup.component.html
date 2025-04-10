@@ -1,0 +1,35 @@
+<div class="signup-container">
+  <div class="signup-card">
+    <h2>Inscription</h2>
+
+    <!-- Message de succès -->
+    <div *ngIf="registrationSuccess" class="success-message">
+      Inscription réussie !
+    </div>
+
+    <!-- Message d'erreur -->
+    <div *ngIf="errorMessage" class="error-message">
+      {{ errorMessage }}
+    </div>
+
+    <form [formGroup]="signupForm" (ngSubmit)="onSubmit()">
+      <label for="fullName">Nom Complet</label>
+      <input id="fullName" type="text" formControlName="fullName" placeholder="Votre nom complet" />
+
+      <label for="email">Email</label>
+      <input id="email" type="email" formControlName="email" placeholder="Votre email" />
+
+      <label for="password">Mot de passe</label>
+      <input id="password" type="password" formControlName="password" placeholder="Votre mot de passe" />
+
+      <label for="role">Rôle</label>
+      <select id="role" formControlName="role">
+        <option value="">-- Sélectionnez un rôle --</option>
+        <option value="proprietaire">Propriétaire</option>
+        <option value="client">Client</option>
+      </select>
+
+      <button type="submit" [disabled]="!signupForm.valid">S'inscrire</button>
+    </form>
+  </div>
+</div>
