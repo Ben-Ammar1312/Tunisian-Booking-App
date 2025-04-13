@@ -1,11 +1,32 @@
-import { Component } from '@angular/core';
+// src/app/dashboard-client/dashboard-client.component.ts
+import { Component, OnInit } from '@angular/core';
+import { PropertyService } from '../Services/property.service';
+import { Property } from '../models/property.model';
+import {CurrencyPipe, NgForOf} from '@angular/common';
 
 @Component({
   selector: 'app-dashboard-client',
-  imports: [],
   templateUrl: './dashboard-client.component.html',
-  styleUrl: './dashboard-client.component.css'
+  imports: [
+    NgForOf,
+    CurrencyPipe
+  ],
+  styleUrls: ['./dashboard-client.component.css']
 })
-export class DashboardClientComponent {
+export class DashboardClientComponent implements OnInit {
+  properties: Property[] = [];
 
+  constructor(private propertyService: PropertyService) { }
+
+  ngOnInit(): void {
+    this.propertyService.getProperties().subscribe({
+      next: (data) => {
+        console.log('Received properties:', data);
+        this.properties = data;
+
+      },
+
+      error: (err) => console.error('Error fetching properties:', err)
+    });
+  }
 }
