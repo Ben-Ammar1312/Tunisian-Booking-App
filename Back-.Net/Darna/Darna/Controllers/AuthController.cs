@@ -4,6 +4,10 @@ using Darna.DTOs;
 using Darna.Models;
 using Microsoft.EntityFrameworkCore;
 using BCrypt.Net;
+using Microsoft.IdentityModel.Tokens;
+using System.IdentityModel.Tokens.Jwt;
+using System.Security.Claims;
+using System.Text;
 
 namespace Darna.Controllers
 {
@@ -63,17 +67,48 @@ namespace Darna.Controllers
 
             var user = await _context.Users.FirstOrDefaultAsync(u => u.Email == loginDto.Email);
             if (user == null)
-                return Unauthorized(new { message = "Email ou mot de passe incorrect." });
+                return Unauthorized(new { message = "Email or password is incorrect." });
 
             bool isPasswordValid = BCrypt.Net.BCrypt.Verify(loginDto.Password, user.PasswordHash);
             if (!isPasswordValid)
-                return Unauthorized(new { message = "Email ou mot de passe incorrect." });
+                return Unauthorized(new { message = "Email or password is incorrect." });
 
-            // Générer un token JWT (tu devras configurer JWT plus tard)
-            var token = "faketoken123"; // Remplace par un vrai token généré
+            // 1) Create claims (you can add more user info as needed)
+            var authClaims = new List<Claim>
+        {
+            // This represents the 'name' or unique identifier for the user
+            new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
 
-            return Ok(new { token, role = user.GetType().Name, fullName = user.FullName });
+            // Email if you like
+            new Claim(ClaimTypes.Email, user.Email),
+
+            // Provide a JTI (unique token ID) for best practices
+            new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString())
+        };
+
+            // 2) The same key you used in Program.cs
+            var authSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes("My32CharacterMinimumSuperSecretKey!!!"));
+
+            // 3) Create the token
+            var token = new JwtSecurityToken(
+                issuer: null,    // Not validating issuer in this setup
+                audience: null,  // Not validating audience
+                expires: DateTime.UtcNow.AddHours(3), // Token valid for 3 hours
+                claims: authClaims,
+                signingCredentials: new SigningCredentials(authSigningKey, SecurityAlgorithms.HmacSha256)
+            );
+
+            // 4) Serialize token
+            var tokenString = new JwtSecurityTokenHandler().WriteToken(token);
+
+            // Return it to the client
+            return Ok(new
+            {
+                token = tokenString,
+                role = user.GetType().Name, // Or however you store roles
+                fullName = user.FullName,
+                expiration = token.ValidTo
+            });
         }
-
     }
 }
