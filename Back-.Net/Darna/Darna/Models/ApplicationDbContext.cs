@@ -10,7 +10,7 @@ namespace Darna.Models
         {
         }
 
-        public DbSet<House> Houses { get; set; }
+        public DbSet<Property> Properties { get; set; }
         public DbSet<Reservation> Reservations { get; set; }
         public DbSet<User> Users { get; set; }
 
@@ -27,7 +27,7 @@ namespace Darna.Models
 
             // Also turn OFF cascading deletes from Reservation -> House
             modelBuilder.Entity<Reservation>()
-                .HasOne(r => r.House)
+                .HasOne(r => r.Property)
                 .WithMany(h => h.Reservations)
                 .HasForeignKey(r => r.HouseId)
                 .OnDelete(DeleteBehavior.Restrict);
@@ -40,7 +40,7 @@ namespace Darna.Models
             //     .OnDelete(DeleteBehavior.Restrict);
 
             // ... also set up your decimal precision, etc.
-            modelBuilder.Entity<House>()
+            modelBuilder.Entity<Property>()
                 .Property(h => h.PricePerNight)
                 .HasColumnType("decimal(18,2)");
 

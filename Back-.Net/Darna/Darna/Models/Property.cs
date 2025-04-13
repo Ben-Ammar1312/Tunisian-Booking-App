@@ -1,9 +1,9 @@
-﻿using System.ComponentModel.DataAnnotations.Schema;
-using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Darna.Models
 {
-    public class House
+    public class Property
     {
         [Key]
         public int Id { get; set; }
@@ -19,6 +19,10 @@ namespace Darna.Models
 
         [Required]
         public decimal PricePerNight { get; set; }
+
+        [Required]
+        [MaxLength(50)]
+        public string Type { get; set; } = string.Empty; // Apartment, Maison, Condo, Villa
 
         public bool IsAvailable { get; set; } = true;
 

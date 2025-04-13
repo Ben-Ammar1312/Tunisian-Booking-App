@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace Darna.Migrations
 {
     /// <inheritdoc />
-    public partial class InitialCreate : Migration
+    public partial class InitMigration : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -33,7 +33,7 @@ namespace Darna.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "Houses",
+                name: "Properties",
                 columns: table => new
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
@@ -42,14 +42,15 @@ namespace Darna.Migrations
                     Location = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Description = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     PricePerNight = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
+                    Type = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false),
                     IsAvailable = table.Column<bool>(type: "bit", nullable: false),
                     ProprietaireId = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Houses", x => x.Id);
+                    table.PrimaryKey("PK_Properties", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_Houses_Users_ProprietaireId",
+                        name: "FK_Properties_Users_ProprietaireId",
                         column: x => x.ProprietaireId,
                         principalTable: "Users",
                         principalColumn: "Id",
@@ -66,15 +67,16 @@ namespace Darna.Migrations
                     EndDate = table.Column<DateTime>(type: "datetime2", nullable: false),
                     TotalPrice = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
                     ClientId = table.Column<int>(type: "int", nullable: false),
-                    HouseId = table.Column<int>(type: "int", nullable: false)
+                    HouseId = table.Column<int>(type: "int", nullable: false),
+                    PropertyId = table.Column<int>(type: "int", nullable: true)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Reservations", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_Reservations_Houses_HouseId",
+                        name: "FK_Reservations_Properties_HouseId",
                         column: x => x.HouseId,
-                        principalTable: "Houses",
+                        principalTable: "Properties",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
@@ -86,8 +88,8 @@ namespace Darna.Migrations
                 });
 
             migrationBuilder.CreateIndex(
-                name: "IX_Houses_ProprietaireId",
-                table: "Houses",
+                name: "IX_Properties_ProprietaireId",
+                table: "Properties",
                 column: "ProprietaireId");
 
             migrationBuilder.CreateIndex(
@@ -108,7 +110,7 @@ namespace Darna.Migrations
                 name: "Reservations");
 
             migrationBuilder.DropTable(
-                name: "Houses");
+                name: "Properties");
 
             migrationBuilder.DropTable(
                 name: "Users");
