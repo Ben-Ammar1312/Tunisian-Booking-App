@@ -1,9 +1,36 @@
+using System.Text;
 using Darna.Models;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
+
+// 1. Add authentication + JWT Bearer
+builder.Services.AddAuthentication(options =>
+{
+    options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+    options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+})
+.AddJwtBearer(options =>
+{
+    options.RequireHttpsMetadata = false; // For development only
+    options.SaveToken = true;
+    options.TokenValidationParameters = new TokenValidationParameters
+    {
+        ValidateIssuerSigningKey = true,
+        // Use the same key to sign tokens in the controller below
+        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes("My32CharacterMinimumSuperSecretKey!!!")),
+
+        ValidateIssuer = false,
+        ValidateAudience = false,
+        // Removes default 5 min buffer before token expiry
+        ClockSkew = TimeSpan.Zero
+    };
+});
+
 
 // Register EF Core with the SQL Server provider
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
@@ -17,13 +44,14 @@ builder.Services.AddOpenApi();
 builder.Services.AddCors(options =>
 {
     options.AddPolicy("AllowAngular",
-        policy => policy.WithOrigins("http://localhost:4200") // Angular tourne sur ce port
+        policy => policy.AllowAnyOrigin()
                         .AllowAnyMethod()
                         .AllowAnyHeader());
 });
 
 
 var app = builder.Build();
+app.UseCors("AllowAngular");
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
