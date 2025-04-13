@@ -1,13 +1,14 @@
-﻿using System.Collections.Generic;
-using System.Reflection.Emit;
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
 
 namespace Darna.Models
 {
     public class ApplicationDbContext : DbContext
     {
+        // Constructor for runtime (dependency injection)
         public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options)
-            : base(options) { }
+            : base(options)
+        {
+        }
 
         public DbSet<House> Houses { get; set; }
         public DbSet<Reservation> Reservations { get; set; }
@@ -17,7 +18,28 @@ namespace Darna.Models
         {
             base.OnModelCreating(modelBuilder);
 
-            // Définition explicite du type decimal avec précision (18,2)
+            // Example: Turn OFF cascading deletes from Reservation -> Client
+            modelBuilder.Entity<Reservation>()
+                .HasOne(r => r.Client)
+                .WithMany(c => c.Reservations)
+                .HasForeignKey(r => r.ClientId)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            // Also turn OFF cascading deletes from Reservation -> House
+            modelBuilder.Entity<Reservation>()
+                .HasOne(r => r.House)
+                .WithMany(h => h.Reservations)
+                .HasForeignKey(r => r.HouseId)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            // You can keep House -> Proprietaire as cascading if you want, or also make it Restrict
+            // modelBuilder.Entity<House>()
+            //     .HasOne(h => h.Proprietaire)
+            //     .WithMany(p => p.Houses)
+            //     .HasForeignKey(h => h.ProprietaireId)
+            //     .OnDelete(DeleteBehavior.Restrict);
+
+            // ... also set up your decimal precision, etc.
             modelBuilder.Entity<House>()
                 .Property(h => h.PricePerNight)
                 .HasColumnType("decimal(18,2)");

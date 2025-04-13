@@ -6,7 +6,7 @@ import { Observable } from 'rxjs';
   providedIn: 'root'
 })
 export class AuthService {
-  private apiUrl = 'http://localhost:5108/api/auth/signup'; 
+  private apiUrl = 'http://10.211.55.5:5058/api/auth/signup';
 
   constructor(private http: HttpClient) {}
 
@@ -14,7 +14,7 @@ export class AuthService {
     return this.http.post(this.apiUrl, user);
   }
   login(credentials: any): Observable<any> {
-    return this.http.post('http://localhost:5108/api/auth/login', credentials);
+    return this.http.post('http://10.211.55.5:5058/api/auth/login', credentials);
   }
-  
+
 }
