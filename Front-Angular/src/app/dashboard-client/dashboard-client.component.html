@@ -1,1 +1,7 @@
-<p>dashboard-client works!</p>
+<!-- src/app/dashboard-client/dashboard-client.component.html -->
+<div *ngFor="let property of properties">
+  <h3>{{ property.name }}</h3>
+  <p>Location: {{ property.location }}</p>
+  <p>Price: {{ property.pricePerNight | currency}}</p>
+  <hr>
+</div>
