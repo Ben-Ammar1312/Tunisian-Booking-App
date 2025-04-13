@@ -25,7 +25,7 @@ Back-.Net/**/*.user
 Back-.Net/**/*.suo
 Back-.Net/**/*.userosscache
 Back-.Net/**/*.sln.docstates
-/Back-.Net/**/appsettings.json
+Back-.Net/Darna/Darna/appsettings.json
 
 # === ANDROID (Android-App) ===
 /Android-App/.gradle/
