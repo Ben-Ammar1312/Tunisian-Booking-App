@@ -3,13 +3,17 @@ import { Component, OnInit } from '@angular/core';
 import { PropertyService } from '../Services/property.service';
 import { Property } from '../models/property.model';
 import {CurrencyPipe, NgForOf} from '@angular/common';
+import {ClientNavbarComponent} from '../shared/client-navbar/client-navbar.component';
+import {FooterComponent} from '../shared/footer/footer.component';
 
 @Component({
   selector: 'app-dashboard-client',
   templateUrl: './dashboard-client.component.html',
   imports: [
     NgForOf,
-    CurrencyPipe
+    CurrencyPipe,
+    ClientNavbarComponent,
+    FooterComponent
   ],
   styleUrls: ['./dashboard-client.component.css']
 })
