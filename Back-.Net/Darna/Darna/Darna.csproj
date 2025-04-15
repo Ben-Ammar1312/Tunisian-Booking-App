@@ -6,6 +6,16 @@
     <ImplicitUsings>enable</ImplicitUsings>
   </PropertyGroup>
 
+  <ItemGroup>
+    <None Remove="xgb_model.onnx" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Include="xgb_model.onnx">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
+
 
 
   <ItemGroup>
@@ -28,11 +38,5 @@
   <ItemGroup>
     <Folder Include="Migrations\" />
   </ItemGroup>
-
-	<ItemGroup>
-		<None Update="xgb_model.onnx">
-			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-		</None>
-	</ItemGroup>
 
 </Project>
