@@ -5,8 +5,14 @@ import { LoginComponent } from './login/login.component';
 import { DashboardProprietaireComponent } from './dashboard-proprietaire/dashboard-proprietaire.component';
 import { DashboardClientComponent } from './dashboard-client/dashboard-client.component';
 import { HomeComponent } from './home/home.component';
+import {AjouterAnnonceComponent} from './ajouter-annonce/ajouter-annonce.component';
+import {PropertyDetailsComponent} from './property-details/property-details.component';
 
 export const routes: Routes = [
+  { path: 'ajouter-annonce', component: AjouterAnnonceComponent },
+  { path: 'property/:id', component: PropertyDetailsComponent },
+
+
   { path: '', component: HomeComponent },
   { path: 'login', component: LoginComponent },
   { path: 'signup', component: SignupComponent },

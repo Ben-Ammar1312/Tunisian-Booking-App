@@ -31,3 +31,13 @@
   margin-top: 10px;
 }
 /* You can add global styles to this file, and also import other style files */
+
+.dropdown-menu {
+  z-index: 1050 !important; /* ensure it appears above other elements */
+  position: absolute !important;
+}
+html, body {
+  max-width: 100%;
+  overflow-x: hidden;
+}
+

@@ -1,4 +1,5 @@
 using System.Text;
+using System.Text.Json.Serialization;
 using Darna.Models;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
@@ -8,7 +9,14 @@ var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 
+
 // 1. Add authentication + JWT Bearer
+builder.Services.AddControllers()
+    .AddJsonOptions(options =>
+    {
+        options.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles;
+    });
+
 builder.Services.AddAuthentication(options =>
 {
     options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;

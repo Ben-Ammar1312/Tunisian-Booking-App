@@ -22,7 +22,7 @@ namespace Darna.Migrations
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
 
-            modelBuilder.Entity("Darna.Models.House", b =>
+            modelBuilder.Entity("Darna.Models.Property", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -51,11 +51,38 @@ namespace Darna.Migrations
                     b.Property<int>("ProprietaireId")
                         .HasColumnType("int");
 
+                    b.Property<string>("Type")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
+
                     b.HasKey("Id");
 
                     b.HasIndex("ProprietaireId");
 
-                    b.ToTable("Houses");
+                    b.ToTable("Properties");
+                });
+
+            modelBuilder.Entity("Darna.Models.PropertyImage", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("PropertyId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Url")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("PropertyId");
+
+                    b.ToTable("PropertyImages");
                 });
 
             modelBuilder.Entity("Darna.Models.Reservation", b =>
@@ -73,6 +100,9 @@ namespace Darna.Migrations
                         .HasColumnType("datetime2");
 
                     b.Property<int>("HouseId")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("PropertyId")
                         .HasColumnType("int");
 
                     b.Property<DateTime>("StartDate")
@@ -156,7 +186,7 @@ namespace Darna.Migrations
                     b.HasDiscriminator().HasValue("Proprietaire");
                 });
 
-            modelBuilder.Entity("Darna.Models.House", b =>
+            modelBuilder.Entity("Darna.Models.Property", b =>
                 {
                     b.HasOne("Darna.Models.Proprietaire", "Proprietaire")
                         .WithMany("Houses")
@@ -167,6 +197,17 @@ namespace Darna.Migrations
                     b.Navigation("Proprietaire");
                 });
 
+            modelBuilder.Entity("Darna.Models.PropertyImage", b =>
+                {
+                    b.HasOne("Darna.Models.Property", "Property")
+                        .WithMany("Images")
+                        .HasForeignKey("PropertyId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Property");
+                });
+
             modelBuilder.Entity("Darna.Models.Reservation", b =>
                 {
                     b.HasOne("Darna.Models.Client", "Client")
@@ -175,7 +216,7 @@ namespace Darna.Migrations
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
-                    b.HasOne("Darna.Models.House", "House")
+                    b.HasOne("Darna.Models.Property", "Property")
                         .WithMany("Reservations")
                         .HasForeignKey("HouseId")
                         .OnDelete(DeleteBehavior.Restrict)
@@ -183,11 +224,13 @@ namespace Darna.Migrations
 
                     b.Navigation("Client");
 
-                    b.Navigation("House");
+                    b.Navigation("Property");
                 });
 
-            modelBuilder.Entity("Darna.Models.House", b =>
+            modelBuilder.Entity("Darna.Models.Property", b =>
                 {
+                    b.Navigation("Images");
+
                     b.Navigation("Reservations");
                 });
 

@@ -1,0 +1,87 @@
+<app-prop-navbar *ngIf="role === 'Proprietaire'"></app-prop-navbar>
+<app-client-navbar *ngIf="role === 'Client'"></app-client-navbar>
+
+
+<div *ngIf="property" class="container my-5">
+  <!-- Main card -->
+  <div class="card shadow-lg border-0" style="min-height: 600px;">
+    <div class="row g-0">
+      <!-- Image carousel -->
+      <div class="col-md-6">
+        <div id="propertyCarousel" class="carousel slide" data-bs-ride="carousel">
+          <div class="carousel-inner">
+            <!-- Loop through images in carousel -->
+            <div
+              class="carousel-item"
+              *ngFor="let image of property.images; let i = index"
+              [ngClass]="{ 'active': i === 0 }">
+              <div style="display: flex; justify-content: center; align-items: center; height: 600px;">
+                <img
+                  [src]="image.url"
+                  alt="{{ property.name }}"
+                  style="width: auto; max-width: 100%; height: auto; max-height: 100%; object-fit: contain; object-position: center;" />
+              </div>
+
+
+
+            </div>
+          </div>
+
+          <!-- Carousel controls -->
+          <button class="carousel-control-prev" type="button" data-bs-target="#propertyCarousel" data-bs-slide="prev">
+            <span class="carousel-control-prev-icon"></span>
+          </button>
+          <button class="carousel-control-next" type="button" data-bs-target="#propertyCarousel" data-bs-slide="next">
+            <span class="carousel-control-next-icon"></span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Property details section -->
+      <div class="col-md-6">
+        <div class="card-body p-5 d-flex flex-column justify-content-between h-100">
+          <div>
+            <h2 class="fw-bold">{{ property.name }}</h2>
+            <p class="text-muted mb-1"><i class="bi bi-geo-alt-fill me-1"></i>{{ property.location }}</p>
+            <p class="text-muted"><strong>Type:</strong> {{ property.type }}</p>
+            <h4 class="text-primary fw-semibold">{{ property.pricePerNight }} TND / nuit</h4>
+          </div>
+
+          <!-- Nights selection -->
+          <div class="mt-4">
+            <label for="nights" class="form-label">Nombre de nuits :</label>
+            <input
+              type="number"
+              class="form-control"
+              min="1"
+              [(ngModel)]="numberOfNights"
+              (ngModelChange)="updateTotal()" />
+            <p class="mt-2"><strong>Total:</strong> {{ totalPrice }} TND</p>
+          </div>
+
+          <div class="mt-4 d-grid">
+            <button class="btn btn-outline-primary btn-lg">Réserver Maintenant</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Description section inside the same card structure -->
+  <div class="mt-5">
+    <div class="card shadow-lg border-0 p-4">
+      <h4>Description</h4>
+      <p class="lead" style="white-space: pre-line; word-wrap: break-word;">{{ property.description }}</p>
+    </div>
+  </div>
+
+</div>
+
+
+
+
+
+
+
+
+<app-footer></app-footer>

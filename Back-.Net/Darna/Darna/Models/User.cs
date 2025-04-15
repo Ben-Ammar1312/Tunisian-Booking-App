@@ -19,7 +19,7 @@ namespace Darna.Models
         public string PasswordHash { get; set; } = string.Empty;
 
         [Required]
-        public string Role { get; set; } // "Admin", "Proprietaire", "Client"
+        public string? Role { get; set; } // "Admin", "Proprietaire", "Client"
 
         public string? EmailVerificationToken { get; set; }
         public bool EmailVerified { get; set; } = false;
@@ -40,7 +40,7 @@ namespace Darna.Models
 
     public class Proprietaire : User
     {
-        public ICollection<House>? Houses { get; set; }
+        public ICollection<Property>? Houses { get; set; }
 
         public Proprietaire()
         {

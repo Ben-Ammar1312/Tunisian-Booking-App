@@ -1,1 +1,30 @@
-<p>dashboard-client works!</p>
+<app-client-navbar></app-client-navbar>
+
+<!-- Property Listing -->
+<div class="container mt-4">
+  <div class="row">
+    <div *ngFor="let property of properties" class="col-sm-6 col-md-4 col-lg-3 mb-4">
+      <div class="card h-100 shadow-sm">
+        <img
+          [src]="property.firstImage || 'assets/default-image.jpg'"
+          class="card-img-top"
+          alt="{{ property.name }}"
+          style="height: 200px; object-fit: contain; background-color: #f8f9fa;"
+        >
+
+        <div class="card-body d-flex flex-column">
+          <h5 class="card-title">{{ property.name }}</h5>
+          <p class="card-text text-muted mb-1">{{ property.location }}</p>
+          <p class="card-text fw-bold mb-2">{{ property.pricePerNight | currency }}</p>
+          <a [routerLink]="['/property', property.id]" class="btn btn-outline-primary mt-auto">
+            View Details
+          </a>
+
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<app-footer></app-footer>
+

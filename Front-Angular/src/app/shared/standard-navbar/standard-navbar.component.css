@@ -1,0 +1,40 @@
+.navbar {
+  display: flex;
+  justify-content: space-between;
+  background-color: #f8f8f8;
+  padding: 1rem;
+}
+
+.navbar-brand a {
+  font-weight: bold;
+  font-size: 1.2rem;
+  text-decoration: none;
+  color: #333;
+}
+
+.navbar-links {
+  list-style: none;
+  display: flex;
+  gap: 1rem;
+}
+
+.navbar-links li {
+  display: inline-block;
+}
+
+.btn {
+  padding: 0.5rem 1rem;
+  border: none;
+  cursor: pointer;
+}
+
+.main-content {
+  text-align: center;
+  margin: 2rem 0;
+}
+
+.footer {
+  text-align: center;
+  padding: 1rem;
+  background-color: #f8f8f8;
+}
