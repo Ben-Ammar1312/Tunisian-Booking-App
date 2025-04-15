@@ -1,0 +1,35 @@
+<div class="container mt-4">
+  <h2>Ajouter une Annonce</h2>
+  <form (ngSubmit)="submitAnnonce()" [formGroup]="annonceForm">
+    <div class="mb-3">
+      <label>Nom</label>
+      <input type="text" formControlName="name" class="form-control">
+    </div>
+    <div class="mb-3">
+      <label>Lieu</label>
+      <input type="text" formControlName="location" class="form-control">
+    </div>
+    <div class="mb-3">
+      <label>Description</label>
+      <textarea formControlName="description" class="form-control"></textarea>
+    </div>
+    <div class="mb-3">
+      <label>Prix par nuit</label>
+      <input type="number" formControlName="pricePerNight" class="form-control">
+    </div>
+    <div class="mb-3">
+      <label>Type</label>
+      <select formControlName="type" class="form-control">
+        <option value="Appartement">Appartement</option>
+        <option value="Maison">Maison</option>
+        <option value="Condo">Condo</option>
+        <option value="Villa">Villa</option>
+      </select>
+    </div>
+    <div class="mb-3">
+      <label>Images</label>
+      <input type="file" (change)="onFileSelected($event)" multiple class="form-control">
+    </div>
+    <button class="btn btn-primary">Publier</button>
+  </form>
+</div>
