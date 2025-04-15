@@ -9,9 +9,11 @@
     <div class="collapse navbar-collapse" id="navbarNavDropdown">
       <ul class="navbar-nav ms-auto">
         <li class="nav-item"><a class="nav-link active" href="/">Accueil</a></li>
+        <li class="nav-item"><a class="nav-link" href="/dashboard-proprietaire">Annances</a></li>
+        <li class="nav-item">
+          <a class="nav-link" routerLink="/ajouter-annonce">Ajouter Une Annonce</a>
+        </li>
 
-        <li class="nav-item"><a class="nav-link" href="/dashboard-client">Annances</a></li>
-        <li class="nav-item"><a class="nav-link" href="#">Third Item</a></li>
         <li class="nav-item dropdown">
           <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownMenuLink" role="button"
              data-bs-toggle="dropdown" aria-expanded="false">
@@ -19,7 +21,7 @@
           </a>
           <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdownMenuLink">
             <li><a class="dropdown-item" href="#">Profil</a></li>
-            <li><a class="dropdown-item" href="#">Historique</a></li>
+            <li><a class="dropdown-item" href="#">Historique De Location </a></li>
             <li><a class="dropdown-item" href="#" (click)="logout()">Déconnexion</a></li>
 
           </ul>

@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace Darna.Migrations
 {
     /// <inheritdoc />
-    public partial class InitMigration : Migration
+    public partial class AddPropertyImages : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -58,6 +58,26 @@ namespace Darna.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "PropertyImages",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Url = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    PropertyId = table.Column<int>(type: "int", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_PropertyImages", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_PropertyImages_Properties_PropertyId",
+                        column: x => x.PropertyId,
+                        principalTable: "Properties",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "Reservations",
                 columns: table => new
                 {
@@ -93,6 +113,11 @@ namespace Darna.Migrations
                 column: "ProprietaireId");
 
             migrationBuilder.CreateIndex(
+                name: "IX_PropertyImages_PropertyId",
+                table: "PropertyImages",
+                column: "PropertyId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_Reservations_ClientId",
                 table: "Reservations",
                 column: "ClientId");
@@ -106,6 +131,9 @@ namespace Darna.Migrations
         /// <inheritdoc />
         protected override void Down(MigrationBuilder migrationBuilder)
         {
+            migrationBuilder.DropTable(
+                name: "PropertyImages");
+
             migrationBuilder.DropTable(
                 name: "Reservations");
 

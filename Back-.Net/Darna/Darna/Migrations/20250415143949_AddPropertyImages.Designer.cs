@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Darna.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20250413165931_InitMigration")]
-    partial class InitMigration
+    [Migration("20250415143949_AddPropertyImages")]
+    partial class AddPropertyImages
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -64,6 +64,28 @@ namespace Darna.Migrations
                     b.HasIndex("ProprietaireId");
 
                     b.ToTable("Properties");
+                });
+
+            modelBuilder.Entity("Darna.Models.PropertyImage", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("PropertyId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Url")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("PropertyId");
+
+                    b.ToTable("PropertyImages");
                 });
 
             modelBuilder.Entity("Darna.Models.Reservation", b =>
@@ -178,6 +200,17 @@ namespace Darna.Migrations
                     b.Navigation("Proprietaire");
                 });
 
+            modelBuilder.Entity("Darna.Models.PropertyImage", b =>
+                {
+                    b.HasOne("Darna.Models.Property", "Property")
+                        .WithMany("Images")
+                        .HasForeignKey("PropertyId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Property");
+                });
+
             modelBuilder.Entity("Darna.Models.Reservation", b =>
                 {
                     b.HasOne("Darna.Models.Client", "Client")
@@ -199,6 +232,8 @@ namespace Darna.Migrations
 
             modelBuilder.Entity("Darna.Models.Property", b =>
                 {
+                    b.Navigation("Images");
+
                     b.Navigation("Reservations");
                 });
 

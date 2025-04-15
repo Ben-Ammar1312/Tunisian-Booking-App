@@ -63,6 +63,28 @@ namespace Darna.Migrations
                     b.ToTable("Properties");
                 });
 
+            modelBuilder.Entity("Darna.Models.PropertyImage", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("PropertyId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Url")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("PropertyId");
+
+                    b.ToTable("PropertyImages");
+                });
+
             modelBuilder.Entity("Darna.Models.Reservation", b =>
                 {
                     b.Property<int>("Id")
@@ -175,6 +197,17 @@ namespace Darna.Migrations
                     b.Navigation("Proprietaire");
                 });
 
+            modelBuilder.Entity("Darna.Models.PropertyImage", b =>
+                {
+                    b.HasOne("Darna.Models.Property", "Property")
+                        .WithMany("Images")
+                        .HasForeignKey("PropertyId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Property");
+                });
+
             modelBuilder.Entity("Darna.Models.Reservation", b =>
                 {
                     b.HasOne("Darna.Models.Client", "Client")
@@ -196,6 +229,8 @@ namespace Darna.Migrations
 
             modelBuilder.Entity("Darna.Models.Property", b =>
                 {
+                    b.Navigation("Images");
+
                     b.Navigation("Reservations");
                 });
 

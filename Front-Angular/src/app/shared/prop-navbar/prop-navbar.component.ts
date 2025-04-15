@@ -1,25 +1,22 @@
-import { Component, AfterViewInit } from '@angular/core';
-import {Router} from '@angular/router';
+import {AfterViewInit, Component} from '@angular/core';
+import {Router, RouterLink} from '@angular/router';
 import {AuthService} from '../../Services/auth.service';
-declare var bootstrap: any;
 
 @Component({
-  selector: 'app-client-navbar',
-  templateUrl: './client-navbar.component.html',
-  styleUrls: ['./client-navbar.component.css']
+  selector: 'app-prop-navbar',
+  imports: [
+    RouterLink
+  ],
+  templateUrl: './prop-navbar.component.html',
+  styleUrl: './prop-navbar.component.css'
 })
-export class ClientNavbarComponent implements AfterViewInit {
+export class PropNavbarComponent {
   userName: string = '';
 
   ngOnInit() {
     this.userName = localStorage.getItem('fullName') || 'Utilisateur';
   }
-  ngAfterViewInit() {
-    const dropdownTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="dropdown"]'));
-    dropdownTriggerList.map(function (dropdownToggleEl) {
-      return new bootstrap.Dropdown(dropdownToggleEl);
-    });
-  }
+
   constructor(private router: Router, private authService: AuthService) {}
 
   logout(): void {
@@ -42,6 +39,5 @@ export class ClientNavbarComponent implements AfterViewInit {
       window.location.reload(); // Forces the view to reinitialize
     });
   }
-
 
 }

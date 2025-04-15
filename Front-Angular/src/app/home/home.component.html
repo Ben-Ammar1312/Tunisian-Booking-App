@@ -1,19 +1,10 @@
-<header>
-  <nav class="navbar">
-    <div class="navbar-brand">
-      <!-- Lien vers la page d'accueil -->
-      <a routerLink="/">Location de Maisons d'hôtes</a>
-    </div>
-    <ul class="navbar-links">
-      <li>
-        <button class="btn btn-primary" (click)="goToLogin()">Se connecter</button>
-      </li>
-      <li>
-        <button class="btn btn-secondary" (click)="goToSignup()">S'inscrire</button>
-      </li>
-    </ul>
-  </nav>
-</header>
+
+<app-standard-navbar *ngIf="!isLoggedIn"></app-standard-navbar>
+
+<app-prop-navbar *ngIf="role === 'Proprietaire'"></app-prop-navbar>
+<app-client-navbar *ngIf="role === 'Client'"></app-client-navbar>
+
+
 
 <main class="main-content">
   <h1>Bienvenue sur notre site de location de maisons d’hôtes</h1>
@@ -22,9 +13,8 @@
     et réserver celle qui vous convient le mieux !
   </p>
   <!-- Ajoutez vos sections, images, etc. -->
+
 </main>
 
-<footer class="footer">
-  <p>&copy; 2023 - Location de maisons d'hôtes</p>
-</footer>
+<app-footer></app-footer>
 
