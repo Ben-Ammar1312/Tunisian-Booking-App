@@ -36,3 +36,8 @@
   z-index: 1050 !important; /* ensure it appears above other elements */
   position: absolute !important;
 }
+html, body {
+  max-width: 100%;
+  overflow-x: hidden;
+}
+

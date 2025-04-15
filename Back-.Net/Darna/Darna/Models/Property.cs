@@ -24,6 +24,9 @@ namespace Darna.Models
         [MaxLength(50)]
         public string Type { get; set; } = string.Empty; // Apartment, Maison, Condo, Villa
 
+        public ICollection<PropertyImage>? Images { get; set; }
+
+
         public bool IsAvailable { get; set; } = true;
 
         public int ProprietaireId { get; set; }

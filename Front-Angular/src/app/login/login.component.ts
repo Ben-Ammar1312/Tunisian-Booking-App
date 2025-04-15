@@ -2,12 +2,16 @@ import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { AuthService } from '../Services/auth.service';
-import { Router, RouterModule } from '@angular/router'; // ✅ Import du Router
+import { Router, RouterModule } from '@angular/router';
+import {FooterComponent} from '../shared/footer/footer.component';
+import {ClientNavbarComponent} from '../shared/client-navbar/client-navbar.component';
+import {PropNavbarComponent} from '../shared/prop-navbar/prop-navbar.component';
+import {StandardNavbarComponent} from '../shared/standard-navbar/standard-navbar.component'; // ✅ Import du Router
 
 @Component({
   selector: 'app-login',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule,RouterModule],
+  imports: [CommonModule, ReactiveFormsModule, RouterModule, FooterComponent, ClientNavbarComponent, PropNavbarComponent, StandardNavbarComponent],
   templateUrl: './login.component.html',
   styleUrls: ['./login.component.css']
 })
@@ -15,12 +19,24 @@ export class LoginComponent implements OnInit {
   loginForm!: FormGroup;
   errorMessage: string = '';
 
+  role: string | null = null;
+  isLoggedIn = false;
+
+
   constructor(private fb: FormBuilder, private authService: AuthService, private router: Router) {}
 
   ngOnInit(): void {
     this.loginForm = this.fb.group({
       email: ['', [Validators.required, Validators.email]],
       password: ['', Validators.required]
+    });
+    const token = localStorage.getItem('token'); // or check for "role"
+    this.isLoggedIn = !!token;
+    this.role = localStorage.getItem("role");
+
+    this.authService.role$.subscribe(role => {
+      this.role = role;
+      this.isLoggedIn = !!role;
     });
   }
 
@@ -32,6 +48,7 @@ export class LoginComponent implements OnInit {
           localStorage.setItem('token', response.token);
           localStorage.setItem('role', response.role);
           localStorage.setItem('fullName', response.fullName);
+          localStorage.setItem('id', response.id);
 
           // ✅ Ajout de logs pour voir ce qu'il se passe
           console.log('Rôle reçu :', response.role);
@@ -54,6 +71,15 @@ export class LoginComponent implements OnInit {
         }
       });
     }
+  }
+
+  goToLogin() {
+    this.router.navigate(['/login']);
+  }
+
+  goToSignup() {
+    // Note : Vérifiez que la route est bien '/signup' ou '/sign-up' selon votre choix
+    this.router.navigate(['/signup']);
   }
 
 }

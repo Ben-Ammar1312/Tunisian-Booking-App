@@ -5,6 +5,7 @@ import { Property } from '../models/property.model';
 import {CurrencyPipe, NgForOf} from '@angular/common';
 import {ClientNavbarComponent} from '../shared/client-navbar/client-navbar.component';
 import {FooterComponent} from '../shared/footer/footer.component';
+import {RouterLink} from '@angular/router';
 
 @Component({
   selector: 'app-dashboard-client',
@@ -13,7 +14,8 @@ import {FooterComponent} from '../shared/footer/footer.component';
     NgForOf,
     CurrencyPipe,
     ClientNavbarComponent,
-    FooterComponent
+    FooterComponent,
+    RouterLink
   ],
   styleUrls: ['./dashboard-client.component.css']
 })
