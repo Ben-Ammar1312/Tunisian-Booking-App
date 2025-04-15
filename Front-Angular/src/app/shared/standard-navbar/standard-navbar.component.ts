@@ -6,7 +6,7 @@ import {NgIf} from '@angular/common';
   selector: 'app-standard-navbar',
   templateUrl: './standard-navbar.component.html',
   imports: [
-    NgIf,
+
     RouterLink
   ],
   styleUrls: ['./standard-navbar.component.css']

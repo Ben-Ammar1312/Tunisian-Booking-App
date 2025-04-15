@@ -13,7 +13,6 @@ import {StandardNavbarComponent} from '../shared/standard-navbar/standard-navbar
   imports: [
     FooterComponent,
     NgIf,
-    RouterLink,
     ClientNavbarComponent,
     PropNavbarComponent,
     StandardNavbarComponent
