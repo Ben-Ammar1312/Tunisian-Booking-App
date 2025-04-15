@@ -107,6 +107,7 @@ namespace Darna.Controllers
                 token = tokenString,
                 role = user.GetType().Name, // Or however you store roles
                 fullName = user.FullName,
+                id = user.Id,
                 expiration = token.ValidTo
             });
         }
