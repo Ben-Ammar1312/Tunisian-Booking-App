@@ -2,11 +2,16 @@ import { Component } from '@angular/core';
 import {FormBuilder, FormGroup, ReactiveFormsModule} from '@angular/forms';
 import { HttpClient } from '@angular/common/http';
 import { Router } from '@angular/router';
+import {NgIf} from '@angular/common';
+import {PropNavbarComponent} from '../shared/prop-navbar/prop-navbar.component';
+import {FooterComponent} from '../shared/footer/footer.component';
 
 @Component({
   selector: 'app-ajouter-annonce',
   imports: [
-    ReactiveFormsModule
+    ReactiveFormsModule,
+    PropNavbarComponent,
+    FooterComponent
   ],
   templateUrl: './ajouter-annonce.component.html'
 })
