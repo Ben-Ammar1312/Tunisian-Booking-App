@@ -5,7 +5,8 @@ namespace Darna.DTOs
     public class PredictionOutput
     {
 
-        [ColumnName("variable")] // Adjust according to ONNX output node name
-        public float PredictedRate { get; set; }
+        [ColumnName("variable")]
+        [VectorType(1)]
+        public float[] Values { get; set; } = default!;
     }
 }

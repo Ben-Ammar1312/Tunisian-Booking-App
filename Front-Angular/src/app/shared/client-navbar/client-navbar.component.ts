@@ -1,12 +1,13 @@
 import { Component, AfterViewInit } from '@angular/core';
-import {Router} from '@angular/router';
+import {Router, RouterLink, RouterLinkActive} from '@angular/router';
 import {AuthService} from '../../Services/auth.service';
 declare var bootstrap: any;
 
 @Component({
   selector: 'app-client-navbar',
   templateUrl: './client-navbar.component.html',
-  styleUrls: ['./client-navbar.component.css']
+  standalone:true,
+  imports:[RouterLinkActive,RouterLink]
 })
 export class ClientNavbarComponent implements AfterViewInit {
   userName: string = '';

@@ -1,11 +1,11 @@
 import {AfterViewInit, Component} from '@angular/core';
-import {Router, RouterLink} from '@angular/router';
+import {Router, RouterLink, RouterLinkActive} from '@angular/router';
 import {AuthService} from '../../Services/auth.service';
 
 @Component({
   selector: 'app-prop-navbar',
   imports: [
-    RouterLink
+    RouterLink,RouterLinkActive
   ],
   templateUrl: './prop-navbar.component.html',
   styleUrl: './prop-navbar.component.css'

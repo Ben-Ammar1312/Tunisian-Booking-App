@@ -56,7 +56,10 @@ builder.Services.AddCors(options =>
                         .AllowAnyMethod()
                         .AllowAnyHeader());
 });
-
+builder.Services.AddDbContext<ApplicationDbContext>(opt =>
+    opt.UseSqlServer(
+        builder.Configuration.GetConnectionString("DefaultConnection"),
+        sql => sql.EnableRetryOnFailure(5, TimeSpan.FromSeconds(5), null)));
 
 var app = builder.Build();
 app.UseCors("AllowAngular");

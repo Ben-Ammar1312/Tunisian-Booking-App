@@ -4,20 +4,18 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace Darna.Controllers
 {
-    public class PricePredictionController : Controller
+    [ApiController]
+    [Route("api/[controller]")]
+    public class PricePredictionController : ControllerBase
     {
-        private readonly PredictionService _predictionService;
-
-        public PricePredictionController()
-        {
-            _predictionService = new PredictionService();
-        }
+        private readonly PredictionService _predictionService = new();
 
         [HttpPost("predict")]
         public ActionResult<float> Predict([FromBody] PredictionInput input)
         {
-            var predictedRate = _predictionService.PredictPrice(input);
-            return Ok(predictedRate);
+            float logVal = _predictionService.PredictPrice(input); // log1p(rate)
+            float nightlyRate = MathF.Exp(logVal) - 1;                 // back to linear
+            return Ok(nightlyRate);
         }
     }
 }

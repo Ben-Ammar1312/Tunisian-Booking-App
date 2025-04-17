@@ -1,24 +1,16 @@
 import { Component } from '@angular/core';
-import {Router, RouterLink} from '@angular/router';
-import {NgIf} from '@angular/common';
+import { Router, RouterLink } from '@angular/router';
 
 @Component({
   selector: 'app-standard-navbar',
-  templateUrl: './standard-navbar.component.html',
-  imports: [
-
-    RouterLink
-  ],
-  styleUrls: ['./standard-navbar.component.css']
+  standalone: true,
+  imports: [ RouterLink ],
+  templateUrl: './standard-navbar.component.html'
 })
 export class StandardNavbarComponent {
+
   constructor(private router: Router) {}
 
-  goToLogin() {
-    this.router.navigate(['/login']);
-  }
-
-  goToSignup() {
-    this.router.navigate(['/signup']);
-  }
+  goToLogin()  { this.router.navigate(['/login']);  }
+  goToSignup() { this.router.navigate(['/signup']); }
 }

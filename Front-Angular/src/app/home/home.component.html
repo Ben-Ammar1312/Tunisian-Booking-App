@@ -1,3 +1,4 @@
+<!-- NAVBARS (unchanged visibility rules) -->
 
 <app-standard-navbar *ngIf="!isLoggedIn"></app-standard-navbar>
 
@@ -5,16 +6,17 @@
 <app-client-navbar *ngIf="role === 'Client'"></app-client-navbar>
 
 
+<!-- HERO -->
+<section class="d-flex align-items-center justify-content-center text-center py-5"
+         style="min-height: calc(100vh - 180px);">   <!-- 180 ≈ nav + footer -->
+  <div class="bg-dark bg-opacity-50 rounded-3 p-4">
+    <h1 class="display-5 fw-bold mb-3 text-white">
+      Bienvenue sur Darna
+    </h1>
+    <p class="lead text-white-50 mb-0">
+      Découvrez nos différentes offres de maisons d’hôtes et réservez celle qui vous convient !
+    </p>
+  </div>
+</section>
 
-<main class="main-content">
-  <h1>Bienvenue sur notre site de location de maisons d’hôtes</h1>
-  <p>
-    Ici, vous pouvez découvrir nos différentes offres de maisons d’hôtes,
-    et réserver celle qui vous convient le mieux !
-  </p>
-  <!-- Ajoutez vos sections, images, etc. -->
-
-</main>
-
-<app-footer></app-footer>
 

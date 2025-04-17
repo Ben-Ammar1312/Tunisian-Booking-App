@@ -11,7 +11,6 @@ import {RouterLink} from '@angular/router';
   selector: 'app-dashboard-proprietaire',
   imports: [
     CurrencyPipe,
-    FooterComponent,
     NgForOf,
     PropNavbarComponent,
     RouterLink

@@ -14,7 +14,6 @@ import {RouterLink} from '@angular/router';
     NgForOf,
     CurrencyPipe,
     ClientNavbarComponent,
-    FooterComponent,
     RouterLink
   ],
   styleUrls: ['./dashboard-client.component.css']

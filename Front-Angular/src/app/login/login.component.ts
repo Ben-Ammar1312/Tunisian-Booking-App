@@ -11,7 +11,7 @@ import {StandardNavbarComponent} from '../shared/standard-navbar/standard-navbar
 @Component({
   selector: 'app-login',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, RouterModule, FooterComponent, StandardNavbarComponent],
+  imports: [CommonModule, ReactiveFormsModule, RouterModule,StandardNavbarComponent],
   templateUrl: './login.component.html',
   styleUrls: ['./login.component.css']
 })

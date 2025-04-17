@@ -7,27 +7,40 @@
 
     public class PredictionService
     {
-        private readonly MLContext _mlContext;
         private readonly PredictionEngine<PredictionInput, PredictionOutput> _predictionEngine;
 
         public PredictionService()
         {
-            _mlContext = new MLContext();
+            var mlContext = new MLContext();
 
-            // Load ONNX model
             var onnxModelPath = Path.Combine(AppContext.BaseDirectory, "xgb_model.onnx");
-            var pipeline = _mlContext.Transforms.ApplyOnnxModel(modelFile: onnxModelPath);
-            var emptyData = _mlContext.Data.LoadFromEnumerable(new List<PredictionInput>());
 
+            // f0‑f22  → vector column "input"
+            var inputCols = Enumerable.Range(0, 23)
+                                      .Select(i => $"f{i}")
+                                      .ToArray();
+
+            var pipeline = mlContext.Transforms
+                .Concatenate("input", inputCols)
+                .Append(mlContext.Transforms.ApplyOnnxModel(
+                    outputColumnNames: new[] { "variable" },
+                    inputColumnNames: new[] { "input" },
+                    modelFile: onnxModelPath));
+
+            var emptyData = mlContext.Data.LoadFromEnumerable(new List<PredictionInput>());
             var model = pipeline.Fit(emptyData);
 
-            _predictionEngine = _mlContext.Model.CreatePredictionEngine<PredictionInput, PredictionOutput>(model);
+            _predictionEngine = mlContext.Model
+                                         .CreatePredictionEngine<PredictionInput, PredictionOutput>(model);
         }
 
+        /// <summary>
+        /// Returns log1p(predictedPrice)  (same scale the model outputs)
+        /// </summary>
         public float PredictPrice(PredictionInput input)
         {
-            var prediction = _predictionEngine.Predict(input);
-            return prediction.PredictedRate;
+            var output = _predictionEngine.Predict(input);
+            return output.Values[0];   // first (only) element of the 1‑dim vector
         }
     }
 }

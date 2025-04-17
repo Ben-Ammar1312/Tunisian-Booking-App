@@ -12,7 +12,7 @@ export class AuthService {
   isLoggedIn$ = this.isLoggedInSubject.asObservable();
   role$ = this.roleSubject.asObservable();
 
-  private apiUrl = 'https://localhost:7130/api/auth/signup';
+  private apiUrl = 'https://10.211.55.5:7130/api/auth/signup';
 
   constructor(private http: HttpClient) {}
 
@@ -20,7 +20,7 @@ export class AuthService {
     return this.http.post(this.apiUrl, user);
   }
   login(credentials: any): Observable<any> {
-    return this.http.post('https://localhost:7130/api/auth/login', credentials);
+    return this.http.post('https://10.211.55.5:7130/api/auth/login', credentials);
   }
 
   setIsLoggedIn(value: boolean) {

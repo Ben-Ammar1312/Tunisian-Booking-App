@@ -1,44 +1,41 @@
-import { Component } from '@angular/core';
-import {Router, RouterLink} from '@angular/router';
-import {FooterComponent} from '../shared/footer/footer.component';
-import {NgIf} from '@angular/common';
-import {ClientNavbarComponent} from '../shared/client-navbar/client-navbar.component';
-import {PropNavbarComponent} from '../shared/prop-navbar/prop-navbar.component';
-import {AuthService} from '../Services/auth.service';
-import {StandardNavbarComponent} from '../shared/standard-navbar/standard-navbar.component';
+import { Component, OnInit } from '@angular/core';
+import { Router } from '@angular/router';
+import { AuthService } from '../Services/auth.service';
+
+import { NgIf } from '@angular/common';
+import { StandardNavbarComponent } from '../shared/standard-navbar/standard-navbar.component';
+import { PropNavbarComponent }     from '../shared/prop-navbar/prop-navbar.component';
+import { ClientNavbarComponent }   from '../shared/client-navbar/client-navbar.component';
+import { FooterComponent }         from '../shared/footer/footer.component';
 
 @Component({
-  selector: 'app-home',
+  selector:    'app-home',
+  standalone:  true,
   templateUrl: './home.component.html',
+  styleUrls:   ['./home.component.css'],   // optional; could remove if empty
   imports: [
-    FooterComponent,
     NgIf,
-    ClientNavbarComponent,
+    StandardNavbarComponent,
     PropNavbarComponent,
-    StandardNavbarComponent
-  ],
-  styleUrls: ['./home.component.css']
+    ClientNavbarComponent,
+  ]
 })
-export class HomeComponent {
+export class HomeComponent implements OnInit {
 
   role: string | null = null;
   isLoggedIn = false;
 
+  constructor(private router: Router,
+              private authService: AuthService) {}
 
-  ngOnInit() {
-    const token = localStorage.getItem('token'); // or check for "role"
-    this.isLoggedIn = !!token;
-    this.role = localStorage.getItem("role");
+  ngOnInit(): void {
+    this.role       = localStorage.getItem('role');
+    this.isLoggedIn = !!localStorage.getItem('token');
 
-    this.authService.role$.subscribe(role => {
-      this.role = role;
-      this.isLoggedIn = !!role;
+    /* keep live updates when user logs in/out in this session */
+    this.authService.role$.subscribe(r => {
+      this.role       = r;
+      this.isLoggedIn = !!r;
     });
-
   }
-
-  constructor(private router: Router, private authService: AuthService) {}
-
-
-
 }

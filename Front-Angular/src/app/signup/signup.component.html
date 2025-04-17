@@ -1,35 +1,63 @@
-<div class="signup-container">
-  <div class="signup-card">
-    <h2>Inscription</h2>
 
-    <!-- Message de succès -->
-    <div *ngIf="registrationSuccess" class="success-message">
-      Inscription réussie !
+
+<div class="d-flex align-items-center justify-content-center min-vh-100">
+  <div class="card auth-card shadow-lg">
+    <h2 class="text-center mb-4">Inscription</h2>
+
+    <!-- success & error banners -->
+    <div *ngIf="registrationSuccess" class="alert alert-success">
+      Inscription réussie !
     </div>
 
-    <!-- Message d'erreur -->
-    <div *ngIf="errorMessage" class="error-message">
+    <div *ngIf="errorMessage" class="alert alert-danger">
       {{ errorMessage }}
     </div>
 
     <form [formGroup]="signupForm" (ngSubmit)="onSubmit()">
-      <label for="fullName">Nom Complet</label>
-      <input id="fullName" type="text" formControlName="fullName" placeholder="Votre nom complet" />
+      <div class="mb-3">
+        <label class="form-label" for="fullName">Nom complet</label>
+        <input
+          id="fullName"
+          type="text"
+          class="form-control"
+          placeholder="Votre nom complet"
+          formControlName="fullName" />
+      </div>
 
-      <label for="email">Email</label>
-      <input id="email" type="email" formControlName="email" placeholder="Votre email" />
+      <div class="mb-3">
+        <label class="form-label" for="email">Email</label>
+        <input
+          id="email"
+          type="email"
+          class="form-control"
+          placeholder="you@mail.com"
+          formControlName="email" />
+      </div>
 
-      <label for="password">Mot de passe</label>
-      <input id="password" type="password" formControlName="password" placeholder="Votre mot de passe" />
+      <div class="mb-3">
+        <label class="form-label" for="password">Mot de passe</label>
+        <input
+          id="password"
+          type="password"
+          class="form-control"
+          placeholder="••••••••"
+          formControlName="password" />
+      </div>
 
-      <label for="role">Rôle</label>
-      <select id="role" formControlName="role">
-        <option value="">-- Sélectionnez un rôle --</option>
-        <option value="proprietaire">Propriétaire</option>
-        <option value="client">Client</option>
-      </select>
+      <div class="mb-4">
+        <label class="form-label" for="role">Rôle</label>
+        <select id="role" class="form-select" formControlName="role">
+          <option value="">-- Sélectionnez un rôle --</option>
+          <option value="proprietaire">Propriétaire</option>
+          <option value="client">Client</option>
+        </select>
+      </div>
 
-      <button type="submit" [disabled]="!signupForm.valid">S'inscrire</button>
+      <button class="btn btn-primary w-100" [disabled]="signupForm.invalid">
+        S'inscrire
+      </button>
     </form>
   </div>
 </div>
+
+

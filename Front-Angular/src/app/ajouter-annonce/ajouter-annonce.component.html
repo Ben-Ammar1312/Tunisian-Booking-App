@@ -1,39 +1,115 @@
 <app-prop-navbar ></app-prop-navbar>
+<!-- ===== MAIN WRAPPER =================================================== -->
+<div class="container py-5" [formGroup]="annonceForm">
 
-<div class="container mt-4">
-  <h2>Ajouter une Annonce</h2>
-  <form (ngSubmit)="submitAnnonce()" [formGroup]="annonceForm">
-    <div class="mb-3">
-      <label>Nom</label>
-      <input type="text" formControlName="name" class="form-control">
+  <!-- CARD -->
+  <div class="card shadow-lg border-0">
+    <div class="card-header bg-primary bg-opacity-75 text-white">
+      <h3 class="mb-0">Ajouter une annonce</h3>
     </div>
-    <div class="mb-3">
-      <label>Lieu</label>
-      <input type="text" formControlName="location" class="form-control">
-    </div>
-    <div class="mb-3">
-      <label>Description</label>
-      <textarea formControlName="description" class="form-control"></textarea>
-    </div>
-    <div class="mb-3">
-      <label>Prix par nuit</label>
-      <input type="number" formControlName="pricePerNight" class="form-control">
-    </div>
-    <div class="mb-3">
-      <label>Type</label>
-      <select formControlName="type" class="form-control">
-        <option value="Appartement">Appartement</option>
-        <option value="Maison">Maison</option>
-        <option value="Condo">Condo</option>
-        <option value="Villa">Villa</option>
-      </select>
-    </div>
-    <div class="mb-3">
-      <label>Images</label>
-      <input type="file" (change)="onFileSelected($event)" multiple class="form-control">
-    </div>
-    <button class="btn btn-primary">Publier</button>
-  </form>
-</div>
 
-<app-footer></app-footer>
+    <div class="card-body">
+
+      <!-- === ❶ CAPACITY ================================================== -->
+      <div class="row g-3">
+        <div class="col-6 col-md-3">
+          <label class="form-label">Invités</label>
+          <input type="number" formControlName="guests" class="form-control" min="1">
+        </div>
+        <div class="col-6 col-md-3">
+          <label class="form-label">Chambres</label>
+          <input type="number" formControlName="bedrooms" class="form-control" min="0">
+        </div>
+        <div class="col-6 col-md-3">
+          <label class="form-label">Lits</label>
+          <input type="number" formControlName="beds" class="form-control" min="0">
+        </div>
+        <div class="col-6 col-md-3">
+          <label class="form-label">Salles de bain</label>
+          <input type="number" formControlName="bathrooms" class="form-control" min="0">
+        </div>
+      </div>
+
+      <!-- === ❷ LOCATION & TYPE ========================================== -->
+      <div class="row g-3 mt-3">
+        <div class="col-md-6">
+          <label class="form-label">Lieu (Wilaya)</label>
+          <select formControlName="location" class="form-select">
+            <option *ngFor="let w of wilayas" [value]="w">{{ w }}</option>
+          </select>
+        </div>
+        <div class="col-md-6">
+          <label class="form-label">Type</label>
+          <select formControlName="type" class="form-select">
+            <option *ngFor="let t of propTypes" [value]="t">{{ t }}</option>
+          </select>
+        </div>
+      </div>
+
+      <!-- === ❸ AMENITIES =============================================== -->
+      <fieldset class="border rounded mt-4 p-3">
+        <legend class="w-auto px-2 h6 mb-0">Équipements</legend>
+
+        <div class="row row-cols-2 row-cols-md-3 row-cols-lg-4 g-2">
+          <div *ngFor="let a of amenities" class="form-check">
+            <input type="checkbox"
+                   class="form-check-input"
+                   [formControlName]="a.key"
+                   [id]="a.key">
+            <label class="form-check-label ms-1" [for]="a.key">
+              {{ a.label }}
+            </label>
+          </div>
+        </div>
+      </fieldset>
+
+      <!-- === ❹ PREDICTION + PRICE ====================================== -->
+      <div class="input-group mt-4">
+        <span class="input-group-text">Prix prédict (TND)</span>
+        <input class="form-control" [value]="predictedPrice | number:'1.0-0'" readonly>
+        <button type="button"
+                class="btn btn-outline-primary"
+                (click)="predict()">
+          Prédire
+        </button>
+      </div>
+
+      <div class="mt-3">
+        <label class="form-label">Prix par nuit (à publier)</label>
+        <input type="number" formControlName="pricePerNight" class="form-control">
+      </div>
+
+      <!-- === ❺ BASIC DETAILS =========================================== -->
+      <div class="mt-3">
+        <label class="form-label">Nom</label>
+        <input type="text" formControlName="name" class="form-control">
+      </div>
+
+      <div class="mt-3">
+        <label class="form-label">Description</label>
+        <textarea formControlName="description" rows="4" class="form-control"></textarea>
+      </div>
+
+      <!-- === ❻ IMAGES ================================================== -->
+      <div class="mt-3">
+        <label class="form-label">Images</label>
+        <input type="file"
+               class="form-control"
+               (change)="onFileSelected($event)"
+               multiple
+               accept="image/*">
+      </div>
+
+      <!-- === ❼ ACTION ================================================== -->
+      <div class="d-grid mt-4">
+        <button class="btn btn-success"
+                [disabled]="annonceForm.invalid"
+                (click)="submitAnnonce()">
+          Publier
+        </button>
+      </div>
+    </div> <!-- /card-body -->
+  </div>   <!-- /card -->
+
+</div> <!-- /container -->
+

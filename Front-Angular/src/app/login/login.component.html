@@ -1,26 +1,43 @@
 <app-standard-navbar *ngIf="!isLoggedIn"></app-standard-navbar>
 
 
+<!-- full‑viewport flex to center the card -->
+<div class="d-flex align-items-center justify-content-center min-vh-100">
+  <div class="card auth-card shadow-lg">
+    <h2 class="text-center mb-4">Connexion</h2>
 
-<div class="login-container">
-  <div class="login-card">
-    <h2>Connexion</h2>
-
-    <div *ngIf="errorMessage" class="error-message">
+    <!-- error banner -->
+    <div *ngIf="errorMessage" class="alert alert-danger">
       {{ errorMessage }}
     </div>
 
+    <!-- reactive form -->
     <form [formGroup]="loginForm" (ngSubmit)="onSubmit()">
-      <label for="email">Email</label>
-      <input id="email" type="email" formControlName="email" placeholder="Votre email" />
+      <div class="mb-3">
+        <label class="form-label" for="email">Votre email</label>
+        <input
+          id="email"
+          type="email"
+          class="form-control"
+          placeholder="ex: you@mail.com"
+          formControlName="email" />
+      </div>
 
-      <label for="password">Mot de passe</label>
-      <input id="password" type="password" formControlName="password" placeholder="Votre mot de passe" />
+      <div class="mb-4">
+        <label class="form-label" for="password">Votre mot de passe</label>
+        <input
+          id="password"
+          type="password"
+          class="form-control"
+          placeholder="••••••••"
+          formControlName="password" />
+      </div>
 
-      <button type="submit" [disabled]="!loginForm.valid">Se connecter</button>
+      <button class="btn btn-primary w-100" [disabled]="loginForm.invalid">
+        Se connecter
+      </button>
     </form>
   </div>
 </div>
 
-<app-footer></app-footer>
 

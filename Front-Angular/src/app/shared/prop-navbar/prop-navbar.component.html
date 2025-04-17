@@ -1,31 +1,54 @@
-<nav class="navbar navbar-expand-lg navbar-light bg-light">
+<nav class="navbar navbar-expand-lg bg-light shadow-sm">
   <div class="container-fluid">
-    <a class="navbar-brand" href="/">Darna</a>
-    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNavDropdown"
-            aria-controls="navbarNavDropdown" aria-expanded="false" aria-label="Toggle navigation">
+
+    <a class="navbar-brand p-0" routerLink="/">
+      <img src="assets/logo.png"
+           alt="Darna"
+           style="height: 4rem; object-fit: contain;" />
+    </a>
+
+    <button class="navbar-toggler" type="button"
+            data-bs-toggle="collapse" data-bs-target="#propNav"
+            aria-controls="propNav" aria-expanded="false" aria-label="Toggle navigation">
       <span class="navbar-toggler-icon"></span>
     </button>
 
-    <div class="collapse navbar-collapse" id="navbarNavDropdown">
-      <ul class="navbar-nav ms-auto">
-        <li class="nav-item"><a class="nav-link active" href="/">Accueil</a></li>
-        <li class="nav-item"><a class="nav-link" href="/dashboard-proprietaire">Annances</a></li>
+    <div class="collapse navbar-collapse flex-lg-grow-0" id="propNav">
+      <ul class="navbar-nav ms-auto gap-lg-2 align-items-lg-center">
+
         <li class="nav-item">
-          <a class="nav-link" routerLink="/ajouter-annonce">Ajouter Une Annonce</a>
+          <a class="nav-link" routerLink="/" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }">
+            Accueil
+          </a>
         </li>
 
+        <li class="nav-item">
+          <a class="nav-link" routerLink="/dashboard-proprietaire" routerLinkActive="active">
+            Annonces
+          </a>
+        </li>
+
+        <li class="nav-item">
+          <a class="nav-link" routerLink="/ajouter-annonce" routerLinkActive="active">
+            Ajouter une annonce
+          </a>
+        </li>
+
+        <!-- user menu -->
         <li class="nav-item dropdown">
-          <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownMenuLink" role="button"
+          <a class="nav-link dropdown-toggle" href="#" role="button"
              data-bs-toggle="dropdown" aria-expanded="false">
             {{ userName }}
           </a>
-          <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdownMenuLink">
-            <li><a class="dropdown-item" href="#">Profil</a></li>
-            <li><a class="dropdown-item" href="#">Historique De Location </a></li>
-            <li><a class="dropdown-item" href="#" (click)="logout()">Déconnexion</a></li>
 
+          <ul class="dropdown-menu dropdown-menu-end">
+            <li><a class="dropdown-item" routerLink="/profil">Profil</a></li>
+            <li><a class="dropdown-item" routerLink="/historique">Historique de locations</a></li>
+            <li><hr class="dropdown-divider"></li>
+            <li><button class="dropdown-item" (click)="logout()">Déconnexion</button></li>
           </ul>
         </li>
+
       </ul>
     </div>
   </div>

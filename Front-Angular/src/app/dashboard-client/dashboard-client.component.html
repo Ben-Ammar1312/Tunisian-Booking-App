@@ -1,30 +1,35 @@
 <app-client-navbar></app-client-navbar>
+<div class="page-content w-100">
+<div class="container py-5">
+  <h2 class="fw-bold mb-4 text-center">Annonces disponibles</h2>
 
-<!-- Property Listing -->
-<div class="container mt-4">
-  <div class="row">
-    <div *ngFor="let property of properties" class="col-sm-6 col-md-4 col-lg-3 mb-4">
-      <div class="card h-100 shadow-sm">
-        <img
-          [src]="property.firstImage || 'assets/default-image.jpg'"
-          class="card-img-top"
-          alt="{{ property.name }}"
-          style="height: 200px; object-fit: contain; background-color: #f8f9fa;"
-        >
+  <div class="row g-4">
+    <ng-container *ngFor="let property of properties">
+      <div class="col-12 col-sm-6 col-md-4 col-lg-3">
+        <div class="card h-100 shadow-sm border-0">
 
-        <div class="card-body d-flex flex-column">
-          <h5 class="card-title">{{ property.name }}</h5>
-          <p class="card-text text-muted mb-1">{{ property.location }}</p>
-          <p class="card-text fw-bold mb-2">{{ property.pricePerNight | currency }}</p>
-          <a [routerLink]="['/property', property.id]" class="btn btn-outline-primary mt-auto">
-            View Details
-          </a>
+          <!-- image -->
+          <img
+            [src]="property.firstImage || 'assets/default-image.jpg'"
+            class="card-img-top object-fit-cover"
+            style="height: 180px;"
+            alt="{{ property.name }}" />
 
+          <!-- body -->
+          <div class="card-body d-flex flex-column">
+            <h6 class="card-title fw-semibold mb-1">{{ property.name }}</h6>
+            <p class="small text-muted mb-1"><i class="bi bi-geo-alt me-1"></i>{{ property.location }}</p>
+            <p class="fw-bold text-primary mb-2">{{ property.pricePerNight | currency:'TND':'symbol':'1.0-0' }}</p>
+
+            <a [routerLink]="['/property', property.id]"
+               class="btn btn-outline-primary btn-sm mt-auto w-100">
+              Détails
+            </a>
+          </div>
         </div>
       </div>
-    </div>
+    </ng-container>
   </div>
 </div>
-
-<app-footer></app-footer>
+</div>
 

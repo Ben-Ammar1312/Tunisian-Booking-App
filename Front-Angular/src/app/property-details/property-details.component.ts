@@ -11,7 +11,7 @@ import {FormsModule} from '@angular/forms';
 @Component({
   selector: 'app-property-details',
   standalone: true,
-  imports: [CommonModule, FooterComponent, ClientNavbarComponent, PropNavbarComponent, FormsModule],
+  imports: [CommonModule, ClientNavbarComponent, PropNavbarComponent, FormsModule],
   templateUrl: './property-details.component.html',
   styleUrls: ['./property-details.component.css']
 })
@@ -30,7 +30,7 @@ export class PropertyDetailsComponent implements OnInit {
 
 
     const id = this.route.snapshot.paramMap.get('id');
-    this.http.get(`https://localhost:7130/api/property/${id}`).subscribe((data) => {
+    this.http.get(`https://10.211.55.5:7130/api/property/${id}`).subscribe((data) => {
 
       this.property = data;
 

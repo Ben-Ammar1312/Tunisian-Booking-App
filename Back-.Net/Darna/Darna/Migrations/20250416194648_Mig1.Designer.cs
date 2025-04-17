@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Darna.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20250415143949_AddPropertyImages")]
-    partial class AddPropertyImages
+    [Migration("20250416194648_Mig1")]
+    partial class Mig1
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)

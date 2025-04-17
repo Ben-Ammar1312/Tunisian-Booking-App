@@ -1,43 +1,90 @@
-.container {
-  margin-top: 50px;
+/* -------------------------------------------------------------
+   1. Global Darna background
+   ------------------------------------------------------------- */
+body {
+  min-height: 100vh;
+  background:
+    linear-gradient(rgba(0, 0, 0, .35), rgba(0, 0, 0, .35)),   /* dark veil */
+    url('assets/darna-bg-wide.png') center/contain no-repeat;         /* hero img  */
+  background-attachment: fixed;
+  color: #fff;          /* default text colour – override per‑section if needed */
 }
 
+/* -------------------------------------------------------------
+   2. Flex skeleton to keep footer at window bottom
+   ------------------------------------------------------------- */
+html, body {
+  height: 100%;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+.page-content {          /* wrapper around <router-outlet> in app.component.html */
+  flex: 1 0 auto;        /* grow + shrink, pushes footer down when short */
+  display: flex;
+  flex-direction: column;
+}
+
+app-footer {             /* footer never grows; sticks to bottom */
+  flex: 0 0 auto;
+}
+
+/* -------------------------------------------------------------
+   3. Shared layout helpers
+   ------------------------------------------------------------- */
+.container    { margin-top: 50px; }        /* your earlier helper          */
+
+.page-shell {                              /* optional generic centering   */
+  padding: 2rem 1.25rem;
+  display: flex;
+  justify-content: center;
+  width: 100%;
+}
+
+/* White / translucent card – add class="auth-card" in login & signup */
+.auth-card {
+  background: rgba(255, 255, 255, .92);
+  border-radius: 12px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, .25);
+  padding: 2rem 3rem;
+  width: 100%;
+  max-width: 420px;
+  color: #212121;        /* dark text inside card */
+}
+
+/* Older form‑wrapper (if still used elsewhere) */
+.form-wrapper {
+  @extend .auth-card;    /* if you compile SCSS; otherwise copy same rules   */
+  margin: 3rem auto;
+}
+
+/* -------------------------------------------------------------
+   4. Utility tweaks
+   ------------------------------------------------------------- */
 .card {
   padding: 20px;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
   border-radius: 10px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, .2);
 }
 
-.user-image {
-  width: 80px;
-  border-radius: 50%;
-}
+.user-image         { width: 80px; border-radius: 50%; }
+.form-control,
+.form-select        { border-radius: 5px; }
 
-.form-control, .form-select {
-  border-radius: 5px;
-}
+.btn-primary        { background-color: #007bff; border: none; padding: 10px; }
+.btn-primary:hover  { background-color: #0056b3; }
 
-.btn-primary {
-  background-color: #007bff;
-  border: none;
-  padding: 10px;
-}
+.alert              { margin-top: 10px; }
 
-.btn-primary:hover {
-  background-color: #0056b3;
-}
-
-.alert {
-  margin-top: 10px;
-}
-/* You can add global styles to this file, and also import other style files */
-
+/* ensures Bootstrap dropdown always appears above dialogs/cards */
 .dropdown-menu {
-  z-index: 1050 !important; /* ensure it appears above other elements */
+  z-index: 1050 !important;
   position: absolute !important;
 }
-html, body {
-  max-width: 100%;
-  overflow-x: hidden;
+/* translucent nav shared by all navbars */
+.navbar.bg-light {
+  background-color: rgba(255, 255, 255, .6) !important; /* 60 % white */
+  backdrop-filter: blur(6px);                           /* subtle glass */
+  border-bottom: 1px solid rgba(255,255,255,.3);
 }
-

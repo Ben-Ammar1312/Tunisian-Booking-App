@@ -8,7 +8,7 @@ import { Property } from '../models/property.model';
   providedIn: 'root'
 })
 export class PropertyService {
-  private apiUrl = 'https://localhost:7130/api/property';
+  private apiUrl = 'https://10.211.55.5:7130/api/property';
 
   constructor(private http: HttpClient) { }
 
