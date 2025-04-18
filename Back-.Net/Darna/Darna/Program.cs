@@ -1,80 +1,68 @@
-using System.Text;
-using System.Text.Json.Serialization;
+﻿using System.Text.Json.Serialization;
 using Darna.Models;
+using Darna.Services;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container.
+// ——— Controllers + JSON (avoid EF cycles)
+builder.Services
+    .AddControllers()
+    .AddJsonOptions(opts =>
+        opts.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles
+    );
 
+// ——— JWT Auth (dev only)
+builder.Services
+  .AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+  .AddJwtBearer(opt =>
+  {
+      opt.RequireHttpsMetadata = false;
+      opt.SaveToken = true;
+      opt.TokenValidationParameters = new TokenValidationParameters
+      {
+          ValidateIssuerSigningKey = true,
+          IssuerSigningKey = new SymmetricSecurityKey(
+              System.Text.Encoding.UTF8.GetBytes(builder.Configuration["Jwt:Key"]!)),
+          ValidateIssuer = false,
+          ValidateAudience = false,
+          ClockSkew = TimeSpan.Zero
+      };
+  });
 
-// 1. Add authentication + JWT Bearer
-builder.Services.AddControllers()
-    .AddJsonOptions(options =>
-    {
-        options.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles;
-    });
-
-builder.Services.AddAuthentication(options =>
-{
-    options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
-    options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
-})
-.AddJwtBearer(options =>
-{
-    options.RequireHttpsMetadata = false; // For development only
-    options.SaveToken = true;
-    options.TokenValidationParameters = new TokenValidationParameters
-    {
-        ValidateIssuerSigningKey = true,
-        // Use the same key to sign tokens in the controller below
-        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes("My32CharacterMinimumSuperSecretKey!!!")),
-
-        ValidateIssuer = false,
-        ValidateAudience = false,
-        // Removes default 5 min buffer before token expiry
-        ClockSkew = TimeSpan.Zero
-    };
-});
-
-
-// Register EF Core with the SQL Server provider
-builder.Services.AddDbContext<ApplicationDbContext>(options =>
-    options.UseSqlServer(
-        builder.Configuration.GetConnectionString("DefaultConnection")));
-
-builder.Services.AddControllers();
-// Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
-builder.Services.AddOpenApi();
-// Configuration CORS pour autoriser Angular
-builder.Services.AddCors(options =>
-{
-    options.AddPolicy("AllowAngular",
-        policy => policy.AllowAnyOrigin()
-                        .AllowAnyMethod()
-                        .AllowAnyHeader());
-});
+// ——— EF Core
 builder.Services.AddDbContext<ApplicationDbContext>(opt =>
-    opt.UseSqlServer(
-        builder.Configuration.GetConnectionString("DefaultConnection"),
-        sql => sql.EnableRetryOnFailure(5, TimeSpan.FromSeconds(5), null)));
+    opt.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")!)
+);
+
+// ——— CORS for Angular
+builder.Services.AddCors(o => o.AddPolicy("AllowAngular", p =>
+    p.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader()
+));
+
+// ——— Our **named** LM Studio client
+builder.Services.AddHttpClient("lmstudio", c =>
+{
+    c.BaseAddress = new Uri("http://10.10.217.175:3000/");
+});
+builder.Services.AddHttpClient<ChatService>(client =>
+{
+    client.BaseAddress = new Uri("http://10.10.217.175:3000/");
+});
+// ——— RAG service
+builder.Services.AddSingleton<ListingSearchService>();
 
 var app = builder.Build();
 app.UseCors("AllowAngular");
-// Configure the HTTP request pipeline.
-if (app.Environment.IsDevelopment())
-{
-    app.MapOpenApi();
-}
-
-
-
-app.UseHttpsRedirection();
-
+app.UseAuthentication();
 app.UseAuthorization();
-
 app.MapControllers();
+
+// Kick off your index build (fire‑and‑forget)
+_ = app.Services
+      .GetRequiredService<ListingSearchService>()
+      .BuildIndexAsync();
 
 app.Run();

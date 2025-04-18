@@ -6,6 +6,20 @@
            alt="Darna"
            style="height: 4rem; object-fit: contain;" />
     </a>
+    <!-- Search form (centered) -->
+    <div class="collapse navbar-collapse justify-content-center">
+      <form class="d-flex w-100 w-lg-50" (ngSubmit)="onSearch()">
+        <input
+          class="form-control me-2"
+          type="search"
+          placeholder="Rechercher (ex : villa Tunis)"
+          aria-label="Search"
+          [(ngModel)]="searchQuery"
+          name="searchQuery"
+        />
+        <button class="btn btn-outline-success" type="submit">🔍</button>
+      </form>
+    </div>
 
     <button class="navbar-toggler" type="button"
             data-bs-toggle="collapse" data-bs-target="#propNav"

@@ -1,48 +1,58 @@
 import { Component, AfterViewInit } from '@angular/core';
-import {Router, RouterLink, RouterLinkActive} from '@angular/router';
-import {AuthService} from '../../Services/auth.service';
-declare var bootstrap: any;
+import { Router, RouterLink, RouterLinkActive } from '@angular/router';
+import { FormsModule } from '@angular/forms';
+import { AuthService } from '../../Services/auth.service';
+import { DarnaAiService } from '../../Services/darna-ai.service';
+import { Property } from '../../models/property.model';
+declare const bootstrap: any;
 
 @Component({
   selector: 'app-client-navbar',
-  templateUrl: './client-navbar.component.html',
-  standalone:true,
-  imports:[RouterLinkActive,RouterLink]
+  standalone: true,
+  imports: [ RouterLink, RouterLinkActive, FormsModule ],
+  templateUrl: './client-navbar.component.html'
 })
 export class ClientNavbarComponent implements AfterViewInit {
-  userName: string = '';
+  userName = '';
+  searchQuery = '';
+  searchResults: Property[] = [];
+
+  constructor(
+    private router: Router,
+    private auth: AuthService,
+    private ai: DarnaAiService
+  ) {}
 
   ngOnInit() {
     this.userName = localStorage.getItem('fullName') || 'Utilisateur';
   }
-  ngAfterViewInit() {
-    const dropdownTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="dropdown"]'));
-    dropdownTriggerList.map(function (dropdownToggleEl) {
-      return new bootstrap.Dropdown(dropdownToggleEl);
-    });
-  }
-  constructor(private router: Router, private authService: AuthService) {}
 
-  logout(): void {
+  ngAfterViewInit() {
+    document
+      .querySelectorAll('[data‑bs‑toggle="dropdown"]')
+      .forEach(el => new bootstrap.Dropdown(el));
+  }
+
+  logout() {
     localStorage.clear();
     sessionStorage.clear();
-
-    // Optional: Clear cookies
-    document.cookie.split(";").forEach((c) => {
-      document.cookie = c
-        .replace(/^ +/, "")
-        .replace(/=.*/, "=;expires=" + new Date().toUTCString() + ";path=/");
-    });
-
-    // Update any auth state logic you have
-    this.authService.setIsLoggedIn(false);
-    this.authService.setUserRole(null);
-
-    // Navigate and reload
-    this.router.navigate(['/']).then(() => {
-      window.location.reload(); // Forces the view to reinitialize
-    });
+    this.auth.setIsLoggedIn(false);
+    this.auth.setUserRole(null);
+    this.router.navigate(['/']).then(() => location.reload());
   }
 
+  onSearch() {
+    const q = this.searchQuery.trim();
+    if (!q) return;
 
+    this.ai.search(q, 5).subscribe({
+      next: props => {
+        this.searchResults = props;
+        console.log('search results:', props);
+        // e.g. navigate to a search‑results page:
+        // this.router.navigate(['/search'], { queryParams: { q } });
+      },
+      error: err => console.error('Search error', err)
+    });
+  }
 }

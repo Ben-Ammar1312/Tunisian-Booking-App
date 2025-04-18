@@ -1,0 +1,28 @@
+<div class="chat-window border rounded p-3 d-flex flex-column">
+  <div class="messages flex-grow-1 mb-3 overflow-auto">
+    <div *ngFor="let m of messages" class="mb-2">
+      <div [ngClass]="{
+            'text-end': m.role==='user',
+            'text-start': m.role==='assistant'
+          }">
+        <span
+          [ngClass]="{
+             'badge bg-primary': m.role==='user',
+             'badge bg-secondary': m.role==='assistant'
+          }">
+          {{ m.text }}
+        </span>
+      </div>
+    </div>
+  </div>
+
+  <form (ngSubmit)="send()" class="d-flex">
+    <input
+      class="form-control me-2"
+      [(ngModel)]="draft"
+      name="draft"
+      placeholder="Tapez votre message…"
+    />
+    <button class="btn btn-success" type="submit">Envoyer</button>
+  </form>
+</div>

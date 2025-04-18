@@ -1,23 +1,36 @@
 import {AfterViewInit, Component} from '@angular/core';
 import {Router, RouterLink, RouterLinkActive} from '@angular/router';
 import {AuthService} from '../../Services/auth.service';
+import {FormsModule} from '@angular/forms';
+import {Property} from '../../models/property.model';
+import {DarnaAiService} from '../../Services/darna-ai.service';
 
 @Component({
   selector: 'app-prop-navbar',
   imports: [
-    RouterLink,RouterLinkActive
+    RouterLink, RouterLinkActive, FormsModule
   ],
   templateUrl: './prop-navbar.component.html',
   styleUrl: './prop-navbar.component.css'
 })
-export class PropNavbarComponent {
-  userName: string = '';
+export class PropNavbarComponent  {
+  userName = '';
+  searchQuery = '';
+  searchResults: Property[] = [];
+
+  constructor(
+    private router: Router,
+    private auth: AuthService,
+    private ai: DarnaAiService,
+    private authService: AuthService
+  ) {}
+
 
   ngOnInit() {
     this.userName = localStorage.getItem('fullName') || 'Utilisateur';
   }
 
-  constructor(private router: Router, private authService: AuthService) {}
+
 
   logout(): void {
     localStorage.clear();
@@ -37,6 +50,20 @@ export class PropNavbarComponent {
     // Navigate and reload
     this.router.navigate(['/']).then(() => {
       window.location.reload(); // Forces the view to reinitialize
+    });
+  }
+  onSearch() {
+    const q = this.searchQuery.trim();
+    if (!q) return;
+
+    this.ai.search(q, 5).subscribe({
+      next: props => {
+        this.searchResults = props;
+        console.log('search results:', props);
+        // e.g. navigate to a search‑results page:
+        // this.router.navigate(['/search'], { queryParams: { q } });
+      },
+      error: err => console.error('Search error', err)
     });
   }
 

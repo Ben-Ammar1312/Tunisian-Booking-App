@@ -1,0 +1,29 @@
+<!-- toggle bubble -->
+<div class="chat-toggle" (click)="toggleOpen()">💬</div>
+
+<!-- main window -->
+<div class="chat-window" [class.open]="isOpen">
+  <div class="chat-header">
+    DarnaBot
+    <button class="close-btn" (click)="toggleOpen()">✕</button>
+  </div>
+
+  <div class="chat-body">
+    <div
+      *ngFor="let m of messages"
+      class="chat-message"
+      [ngClass]="m.from === 'user' ? 'from-user' : 'from-bot'">
+      {{ m.text }}
+    </div>
+  </div>
+
+  <form class="chat-input" (ngSubmit)="send()">
+    <input
+      [(ngModel)]="input"
+      name="input"
+      placeholder="Tapez votre message…"
+      autocomplete="off"
+    />
+    <button type="submit">→</button>
+  </form>
+</div>

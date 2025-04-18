@@ -4,6 +4,7 @@ using Darna.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Darna.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250417204721_Mig2")]
+    partial class Mig2
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -30,46 +33,10 @@ namespace Darna.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<bool>("AirConditioning")
-                        .HasColumnType("bit");
-
-                    b.Property<bool>("BbqGrill")
-                        .HasColumnType("bit");
-
-                    b.Property<bool>("CarbonMonoxideAlarm")
-                        .HasColumnType("bit");
-
-                    b.Property<bool>("CoffeeMaker")
-                        .HasColumnType("bit");
-
                     b.Property<string>("Description")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<bool>("Dryer")
-                        .HasColumnType("bit");
-
-                    b.Property<bool>("FirstAidKit")
-                        .HasColumnType("bit");
-
-                    b.Property<bool>("FreeParkingOnPremises")
-                        .HasColumnType("bit");
-
-                    b.Property<bool>("Gym")
-                        .HasColumnType("bit");
-
-                    b.Property<bool>("HairDryer")
-                        .HasColumnType("bit");
-
-                    b.Property<bool>("Heating")
-                        .HasColumnType("bit");
-
-                    b.Property<bool>("HotTub")
-                        .HasColumnType("bit");
-
                     b.Property<bool>("IsAvailable")
-                        .HasColumnType("bit");
-
-                    b.Property<bool>("Kitchen")
                         .HasColumnType("bit");
 
                     b.Property<string>("Location")
@@ -81,31 +48,16 @@ namespace Darna.Migrations
                         .HasMaxLength(150)
                         .HasColumnType("nvarchar(150)");
 
-                    b.Property<bool>("PetsAllowed")
-                        .HasColumnType("bit");
-
-                    b.Property<bool>("Pool")
-                        .HasColumnType("bit");
-
                     b.Property<decimal>("PricePerNight")
                         .HasColumnType("decimal(18,2)");
 
                     b.Property<int>("ProprietaireId")
                         .HasColumnType("int");
 
-                    b.Property<bool>("SmokeAlarm")
-                        .HasColumnType("bit");
-
                     b.Property<string>("Type")
                         .IsRequired()
                         .HasMaxLength(50)
                         .HasColumnType("nvarchar(50)");
-
-                    b.Property<bool>("Washer")
-                        .HasColumnType("bit");
-
-                    b.Property<bool>("Wifi")
-                        .HasColumnType("bit");
 
                     b.HasKey("Id");
 

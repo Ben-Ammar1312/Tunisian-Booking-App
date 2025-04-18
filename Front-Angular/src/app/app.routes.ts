@@ -7,6 +7,7 @@ import { DashboardClientComponent } from './dashboard-client/dashboard-client.co
 import { HomeComponent } from './home/home.component';
 import {AjouterAnnonceComponent} from './ajouter-annonce/ajouter-annonce.component';
 import {PropertyDetailsComponent} from './property-details/property-details.component';
+import {ChatComponent} from './chat/chat.component';
 
 export const routes: Routes = [
   { path: 'ajouter-annonce', component: AjouterAnnonceComponent },
@@ -18,6 +19,7 @@ export const routes: Routes = [
   { path: 'signup', component: SignupComponent },
   { path: 'dashboard-client', component: DashboardClientComponent },
   { path: 'dashboard-proprietaire', component: DashboardProprietaireComponent },
+  { path: 'chat', component: ChatComponent },
 ];
 
 @NgModule({

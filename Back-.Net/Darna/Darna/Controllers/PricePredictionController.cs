@@ -14,7 +14,7 @@ namespace Darna.Controllers
         public ActionResult<float> Predict([FromBody] PredictionInput input)
         {
             float logVal = _predictionService.PredictPrice(input); // log1p(rate)
-            float nightlyRate = MathF.Exp(logVal) - 1;                 // back to linear
+            float nightlyRate = (MathF.Exp(logVal) - 1) * 3 ;                 // back to linear
             return Ok(nightlyRate);
         }
     }

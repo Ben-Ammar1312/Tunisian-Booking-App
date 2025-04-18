@@ -1,0 +1,6 @@
+.chat-window {
+  height: 500px;
+}
+.messages {
+  scrollbar-width: thin;
+}
