@@ -8,10 +8,12 @@ import { HomeComponent } from './home/home.component';
 import {AjouterAnnonceComponent} from './ajouter-annonce/ajouter-annonce.component';
 import {PropertyDetailsComponent} from './property-details/property-details.component';
 import {ChatComponent} from './chat/chat.component';
+import {MesAnnoncesComponent} from './mes-annonces/mes-annonces.component';
 
 export const routes: Routes = [
   { path: 'ajouter-annonce', component: AjouterAnnonceComponent },
   { path: 'property/:id', component: PropertyDetailsComponent },
+  { path: 'mes-annonces', component: MesAnnoncesComponent },
 
 
   { path: '', component: HomeComponent },

@@ -3,7 +3,8 @@ using Darna.DTOs;
 using Darna.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using System.Text.Json; // Make sure this is at the top
+using System.Text.Json;
+using System.Security.Claims; // Make sure this is at the top
 
 [ApiController]
 [Route("api/[controller]")]
@@ -155,6 +156,63 @@ public class PropertyController : ControllerBase
 
         return Ok(propertyDto);
     }
+
+    // Get properties for a specific user by their userId
+    [HttpGet("mes-annonces/{userId}")]
+    public async Task<IActionResult> GetMesAnnonces(int userId)
+    {
+        var properties = await _context.Properties
+            .Where(p => p.ProprietaireId == userId) // Filter by the user ID
+            .Include(p => p.Images) // Include images
+            .Select(p => new
+            {
+                p.Id,
+                p.Name,
+                p.Location,
+                p.Description,
+                p.PricePerNight,
+                p.Type,
+                p.IsAvailable,
+                p.ProprietaireId,
+                FirstImage = p.Images != null && p.Images.Any() ? p.Images.First().Url : null
+            })
+            .ToListAsync();
+
+        if (!properties.Any())
+        {
+            return NotFound("No properties found for this user.");
+        }
+
+        return Ok(properties);
+    }
+
+    [HttpDelete("{id}")]
+    public async Task<IActionResult> DeleteProperty(int id)
+    {
+        var property = await _context.Properties
+            .Include(p => p.Images) // include images to delete them too if necessary
+            .FirstOrDefaultAsync(p => p.Id == id);
+
+        if (property == null)
+        {
+            return NotFound();
+        }
+
+        // Remove the associated images first if they exist
+        if (property.Images != null && property.Images.Any())
+        {
+            _context.PropertyImages.RemoveRange(property.Images);
+        }
+
+        // Remove the property
+        _context.Properties.Remove(property);
+        await _context.SaveChangesAsync();
+
+        return NoContent(); // 204 success, no body returned
+    }
+
+
+
 
 
 

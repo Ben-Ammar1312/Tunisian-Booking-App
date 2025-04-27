@@ -16,4 +16,11 @@ export class PropertyService {
   getProperties(): Observable<Property[]> {
     return this.http.get<Property[]>(environment.apiUrl + '/property');
   }
+
+
+
+  // Fetch properties for a specific user
+  getPropertiesForUser(userId: number): Observable<Property[]> {
+    return this.http.get<Property[]>(`${environment.apiUrl}/property/mes-annonces/${userId}`);
+  }
 }
