@@ -148,7 +148,7 @@ export class AjouterAnnonceComponent {
       proprietaireId: localStorage.getItem('id')
     };
 
-    console.log(propertyData);
+
 
     this.http.post(environment.apiUrl +'/property', propertyData)
       .subscribe({

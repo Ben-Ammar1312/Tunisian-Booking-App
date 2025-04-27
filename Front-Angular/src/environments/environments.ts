@@ -1,6 +1,6 @@
 export const environment = {
   production: false,
-  apiUrl: 'https://localhost:7130/api',   // ← your .NET backend base URL + “/api”
+  apiUrl: 'https://10.211.55.9:7130/api',
 
 
   //Cloudinary Settings
