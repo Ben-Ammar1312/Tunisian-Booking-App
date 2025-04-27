@@ -34,8 +34,12 @@ builder.Services
 
 // ——— EF Core
 builder.Services.AddDbContext<ApplicationDbContext>(opt =>
-    opt.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")!)
-);
+    opt.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")!).EnableSensitiveDataLogging()        // ← add this
+      .LogTo(Console.WriteLine,
+             new[] { DbLoggerCategory.Database.Command.Name },
+             LogLevel.Information));
+
+;
 
 // ——— CORS for Angular
 builder.Services.AddCors(o => o.AddPolicy("AllowAngular", p =>

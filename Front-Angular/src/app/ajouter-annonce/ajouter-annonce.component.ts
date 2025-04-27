@@ -5,6 +5,7 @@ import { Router } from '@angular/router';
 import { locationMap, typeMap } from '../maps';
 import {CommonModule} from '@angular/common';
 import {PropNavbarComponent} from '../shared/prop-navbar/prop-navbar.component';
+import { environment } from '../../environments/environments';
 import {FooterComponent} from '../shared/footer/footer.component';
 
 interface Amenity { key: string; label: string; }
@@ -20,6 +21,7 @@ interface Amenity { key: string; label: string; }
   templateUrl: './ajouter-annonce.component.html',
 })
 export class AjouterAnnonceComponent {
+
   annonceForm: FormGroup;
   predictedPrice: number | null = null;
 
@@ -109,7 +111,7 @@ export class AjouterAnnonceComponent {
     };
 
     this.http
-      .post<number>('https://10.211.55.5:7130/api/priceprediction/predict', body)
+      .post<number>(environment.apiUrl + '/priceprediction/predict', body)
       .subscribe({
         next: price => {
           this.predictedPrice = price;
@@ -127,9 +129,9 @@ export class AjouterAnnonceComponent {
     /* identical to your original method */
     const fd = new FormData();
     fd.append('file', file);
-    fd.append('upload_preset', 'darna_anon_upload');
+    fd.append('upload_preset', environment.uploadPreset);
     const res: any = await this.http
-      .post('https://api.cloudinary.com/v1_1/dn8rkdgrv/image/upload', fd)
+      .post('https://api.cloudinary.com/v1_1/' + environment.cloudinaryName + '/image/upload', fd)
       .toPromise();
     return res.secure_url;
   }
@@ -146,7 +148,9 @@ export class AjouterAnnonceComponent {
       proprietaireId: localStorage.getItem('id')
     };
 
-    this.http.post('https://10.211.55.5:7130/api/property', propertyData)
+    console.log(propertyData);
+
+    this.http.post(environment.apiUrl +'/property', propertyData)
       .subscribe({
         next: () => {
           alert('Annonce ajoutée avec succès !');

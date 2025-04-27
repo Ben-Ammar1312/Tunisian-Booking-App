@@ -1,3 +1,4 @@
+// @ts-ignore
 import { provideServerRendering } from '@angular/platform-server';
 import { provideRouter } from '@angular/router';
 import { provideHttpClient } from '@angular/common/http';

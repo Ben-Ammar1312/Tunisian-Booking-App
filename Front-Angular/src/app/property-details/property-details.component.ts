@@ -6,6 +6,7 @@ import {FooterComponent} from '../shared/footer/footer.component';
 import {ClientNavbarComponent} from '../shared/client-navbar/client-navbar.component';
 import {PropNavbarComponent} from '../shared/prop-navbar/prop-navbar.component';
 import {FormsModule} from '@angular/forms';
+import {environment} from '../../environments/environments';
 
 
 @Component({
@@ -30,8 +31,10 @@ export class PropertyDetailsComponent implements OnInit {
 
 
     const id = this.route.snapshot.paramMap.get('id');
-    this.http.get(`https://10.211.55.5:7130/api/property/${id}`).subscribe((data) => {
+    this.http.get(`${environment.apiUrl}/property/${id}`).subscribe((data) => {
 
+
+      console.log(data);
       this.property = data;
 
       this.updateTotal()
