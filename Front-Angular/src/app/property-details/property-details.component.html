@@ -84,6 +84,11 @@
         <i class="bi bi-water"></i> Piscine
       </div>
 
+      <!-- Heater -->
+      <div *ngIf="property.heating" class="col-md-4 mb-2">
+        <i class="bi bi-droplet-half"></i> Chauffage
+      </div>
+
       <!-- Hot Tub -->
       <div *ngIf="property.hotTub" class="col-md-4 mb-2">
         <i class="bi bi-droplet-half"></i> Bain à remous
