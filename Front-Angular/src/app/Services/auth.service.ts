@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import {BehaviorSubject, Observable} from 'rxjs';
+import {environment} from '../../environments/environments';
 
 @Injectable({
   providedIn: 'root'
@@ -12,15 +13,15 @@ export class AuthService {
   isLoggedIn$ = this.isLoggedInSubject.asObservable();
   role$ = this.roleSubject.asObservable();
 
-  private apiUrl = 'https://10.211.55.5:7130/api/auth/signup';
+
 
   constructor(private http: HttpClient) {}
 
   signup(user: any): Observable<any> {
-    return this.http.post(this.apiUrl, user);
+    return this.http.post(environment.apiUrl + '/auth/signup', user);
   }
   login(credentials: any): Observable<any> {
-    return this.http.post('https://10.211.55.5:7130/api/auth/login', credentials);
+    return this.http.post(environment.apiUrl + '/auth/login', credentials);
   }
 
   setIsLoggedIn(value: boolean) {
