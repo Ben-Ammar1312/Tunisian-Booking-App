@@ -1,4 +1,8 @@
 <resources>
     <string name="app_name">Darna</string>
     <string name="api_base_url">http://192.168.219.240:5058/api</string>
+    <string-array name="role_array">
+        <item>Propriétaire</item>
+        <item>Client</item>
+    </string-array>
 </resources>

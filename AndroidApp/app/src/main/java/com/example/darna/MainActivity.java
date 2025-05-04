@@ -27,7 +27,7 @@ import java.util.Map;
 public class MainActivity extends AppCompatActivity {
 
     private EditText emailEditText, passwordEditText;
-    private Button loginButton;
+    private Button loginButton,registerButton;
     private RequestQueue requestQueue;  // Volley request queue
 
     @Override
@@ -38,12 +38,24 @@ public class MainActivity extends AppCompatActivity {
         emailEditText = findViewById(R.id.emailInput);     // make sure these IDs match your XML
         passwordEditText = findViewById(R.id.passwordInput);
         loginButton = findViewById(R.id.loginButton);
+        registerButton = findViewById(R.id.registerButton);
 
         requestQueue = Volley.newRequestQueue(this);  // Initialize Volley
 
         loginButton.setOnClickListener(v -> {
             loginUser();
         });
+
+        registerButton.setOnClickListener(v -> {
+            registerUser();
+        });
+    }
+
+    private void registerUser() {
+
+        Intent intent = new Intent(MainActivity.this, RegisterActivity.class);
+        startActivity(intent);
+        finish();
     }
 
     private void loginUser() {
@@ -55,7 +67,7 @@ public class MainActivity extends AppCompatActivity {
             return;
         }
 
-        String baseUrl = getString(R.string.api_base_url); // Example: http://192.168.x.x:5058/api
+        String baseUrl = getString(R.string.api_base_url);
         String loginUrl = baseUrl + "/auth/login";
         Log.d("LOGIN_DEBUG", "Login URL: " + loginUrl);
 
