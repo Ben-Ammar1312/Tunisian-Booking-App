@@ -32,6 +32,8 @@ android {
 }
 
 dependencies {
+    implementation(libs.volley)
+
 
     implementation(libs.appcompat)
     implementation(libs.material)
