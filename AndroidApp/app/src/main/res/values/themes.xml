@@ -5,5 +5,7 @@
         <!-- <item name="colorPrimary">@color/my_light_primary</item> -->
     </style>
 
-    <style name="Theme.Darna" parent="Base.Theme.Darna" />
+    <style name="Theme.Darna" parent="Theme.MaterialComponents.DayNight.NoActionBar" />
+
+
 </resources>
