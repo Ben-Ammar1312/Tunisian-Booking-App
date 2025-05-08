@@ -1,6 +1,6 @@
 export const environment = {
   production: false,
-  apiUrl: 'https://localhost:7130/api',
+  apiUrl: 'http://localhost:5058/api',
 
 
   //Cloudinary Settings

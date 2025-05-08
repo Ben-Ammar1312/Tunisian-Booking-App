@@ -32,9 +32,8 @@ android {
 }
 
 dependencies {
+
     implementation(libs.volley)
-
-
     implementation(libs.appcompat)
     implementation(libs.material)
     implementation(libs.activity)
@@ -42,4 +41,13 @@ dependencies {
     testImplementation(libs.junit)
     androidTestImplementation(libs.ext.junit)
     androidTestImplementation(libs.espresso.core)
+    implementation(libs.picasso)
+    implementation("com.squareup.picasso:picasso:2.8")
+    implementation("com.squareup.okhttp3:okhttp:4.12.0")
+    implementation("com.jakewharton.picasso:picasso2-okhttp3-downloader:1.1.0")
+    implementation("com.squareup.okhttp3:logging-interceptor:4.12.0")
+
+
+
+
 }
