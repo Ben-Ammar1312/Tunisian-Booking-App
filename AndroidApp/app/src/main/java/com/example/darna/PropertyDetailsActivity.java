@@ -12,6 +12,7 @@ import com.android.volley.DefaultRetryPolicy;
 import com.android.volley.Request;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.example.darna.adapter.ImagePagerAdapter;
+import com.example.darna.adapter.PropertyAdapter;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -23,6 +24,8 @@ public class PropertyDetailsActivity extends AppCompatActivity {
 
     private ViewPager2 viewPager;
     private TextView tvName, tvLocation, tvDescription, tvPrice;
+
+    public PropertyAdapter adp;
 
     @Override protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -38,6 +41,7 @@ public class PropertyDetailsActivity extends AppCompatActivity {
 
         int id = getIntent().getIntExtra("propertyId", -1);
         fetchPropertyDetails(id);
+
     }
 
     /* ---------------- network ---------------- */

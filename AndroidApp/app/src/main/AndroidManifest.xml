@@ -19,7 +19,11 @@
         <activity
             android:name=".PropertyDetailsActivity"
             android:exported="false" />
-        <activity android:name=".HomeActivity" />
+
+        <activity android:name=".HomeActivity"
+            android:windowSoftInputMode="adjustResize" />
+
+
         <activity android:name=".RegisterActivity" />
         <activity
             android:name=".MainActivity"

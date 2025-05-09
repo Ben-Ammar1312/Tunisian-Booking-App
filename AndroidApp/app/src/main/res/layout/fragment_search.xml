@@ -18,7 +18,7 @@
         <com.google.android.material.textfield.TextInputEditText
             android:id="@+id/et_query"
             android:hint="Rechercher (ex : villa sous 1200)"
-            android:imeOptions="actionSearch"/>
+            android:imeOptions="actionSearch" android:layout_height="wrap_content" android:layout_width="match_parent"/>
     </com.google.android.material.textfield.TextInputLayout>
 
     <androidx.recyclerview.widget.RecyclerView

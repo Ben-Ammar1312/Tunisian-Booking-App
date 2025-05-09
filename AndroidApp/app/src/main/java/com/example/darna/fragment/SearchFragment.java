@@ -2,6 +2,9 @@ package com.example.darna.fragment;
 
 import android.net.Uri;
 import android.os.Bundle;
+import android.text.Editable;
+import android.text.TextWatcher;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -24,55 +27,77 @@ import com.example.darna.model.Property;
 import com.google.gson.reflect.TypeToken;
 import com.google.gson.Gson;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class SearchFragment extends Fragment implements PropertyAdapter.Listener {
 
     private EditText etQuery;
     private PropertyAdapter adapter;
+    private List<Property> fullList = new ArrayList<>();
 
     @Nullable
     @Override
-    public View onCreateView(
-            @NonNull LayoutInflater inf, @Nullable ViewGroup c, @Nullable Bundle s) {
-        return inf.inflate(R.layout.fragment_search, c, false);
+    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+        return inflater.inflate(R.layout.fragment_search, container, false);
     }
 
-    @Override public void onViewCreated(@NonNull View v, @Nullable Bundle s) {
-        etQuery   = v.findViewById(R.id.et_query);
-        RecyclerView rv = v.findViewById(R.id.rv_results);
+    @Override
+    public void onViewCreated(@NonNull View v, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(v, savedInstanceState);
 
-        adapter = new PropertyAdapter(this);
+        if (getArguments() != null) {
+            fullList = (List<Property>) getArguments().getSerializable("fullList");
+        }
+
+        RecyclerView rv = v.findViewById(R.id.rv_results);
         rv.setLayoutManager(new GridLayoutManager(getContext(), 2));
+        adapter = new PropertyAdapter(this);
         rv.setAdapter(adapter);
 
-        etQuery.setOnEditorActionListener((t, id, ev) -> {
-            submitSearch(t.getText().toString().trim());
-            return true;
+        if (fullList != null) {
+            adapter.submitList(fullList);
+        }
+
+        etQuery = v.findViewById(R.id.et_query);
+        etQuery.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                submitSearch(s.toString().trim());
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {}
         });
     }
 
     private void submitSearch(String q) {
-        if (q.isEmpty()) return;
+        if (q.isEmpty()) {
+            adapter.submitList(fullList);
+            return;
+        }
 
-        String url = getString(R.string.api_base_url) + "/search"
-                + "?query=" + Uri.encode(q) + "&topK=5";
+        List<Property> filtered = new ArrayList<>();
+        for (Property p : fullList) {
+            if (p.name.toLowerCase().contains(q.toLowerCase()) ||
+                    p.location.toLowerCase().contains(q.toLowerCase())) {
+                filtered.add(p);
+            }
+        }
 
-        JsonArrayRequest req = new JsonArrayRequest(
-                Request.Method.GET, url, null,
-                arr -> {
-                    List<Property> list = new Gson()
-                            .fromJson(arr.toString(),
-                                    new TypeToken<List<Property>>(){}.getType());
-                    adapter.submitList(list);
-                },
-                err -> Toast.makeText(getContext(),
-                        "Erreur recherche", Toast.LENGTH_SHORT).show());
-
-        VolleySingleton.getInstance(requireContext()).addToRequestQueue(req);
+        adapter.submitList(filtered);
     }
-    @Override public void onClick(Property p){
-        // e.g. open details
-        ((HomeActivity)requireActivity()).openDetails(p);
+
+    public void updateAdapter(List<Property> newList) {
+        fullList = newList;
+        adapter.submitList(newList);
+    }
+
+    @Override
+    public void onClick(Property p) {
+        ((HomeActivity) requireActivity()).openDetails(p);
     }
 }

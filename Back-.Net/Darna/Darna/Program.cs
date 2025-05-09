@@ -51,24 +51,24 @@ builder.Services.AddDbContext<ApplicationDbContext>(opt =>
 );
 
 // 5) HTTP clients & your search service
-builder.Services.AddHttpClient("lmstudio", c =>
-    c.BaseAddress = new Uri("http://127.0.0.1:1234/"));
-builder.Services.AddHttpClient<ChatService>(c =>
-    c.BaseAddress = new Uri("http://127.0.0.1:1234/"));
-builder.Services.AddSingleton<ListingSearchService>();
+//builder.Services.AddHttpClient("lmstudio", c =>
+//    c.BaseAddress = new Uri("http://127.0.0.1:1234/"));
+//builder.Services.AddHttpClient<ChatService>(c =>
+//    c.BaseAddress = new Uri("http://127.0.0.1:1234/"));
+//builder.Services.AddSingleton<ListingSearchService>();
 
 var app = builder.Build();
 
 // ────── BUILD THE INDEX RIGHT HERE ──────
 // Block on startup so that by the time Kestrel is up, the index is READY.
-app.Services
-   .GetRequiredService<ListingSearchService>()
-   .BuildIndexAsync()
-   .GetAwaiter()
-   .GetResult();
+//app.Services
+//   .GetRequiredService<ListingSearchService>()
+//   .BuildIndexAsync()
+//   .GetAwaiter()
+//   .GetResult();
 
 // ────── MIDDLEWARE PIPELINE ──────
-app.UseHttpsRedirection();
+//app.UseHttpsRedirection();
 app.UseRouting();
 app.UseCors("AllowAll");
 app.UseAuthentication();
