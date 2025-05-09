@@ -7,6 +7,8 @@ using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Darna.Models;
+using Darna.DTOs;
+using System.Text.RegularExpressions;
 
 namespace Darna.Services
 {
@@ -72,37 +74,108 @@ namespace Darna.Services
         /// <summary>
         /// Embed the query → cosine against your in‑memory index → top K.
         /// </summary>
-        public async Task<Property[]> SearchAsync(string query, int topK = 5)
+public async Task<PropertyDto[]> SearchAsync(string query, int topK = 5)
+{
+    // ───────────────────────────────────────────────────────────────
+    // 0️⃣  Extract numeric price filters from the query
+    //     (very small regex – covers 99 % of casual queries)
+    // ───────────────────────────────────────────────────────────────
+    decimal? minPrice = null, maxPrice = null;
+    var m = Regex.Match(query, @"(?i)(under|below|less\s+than)\s+(\d+)");
+    if (m.Success)            maxPrice = decimal.Parse(m.Groups[2].Value);
+    m = Regex.Match(query, @"(?i)(over|above|more\s+than)\s+(\d+)");
+    if (m.Success)            minPrice = decimal.Parse(m.Groups[2].Value);
+    m = Regex.Match(query, @"(?i)between\s+(\d+)\s+and\s+(\d+)");
+    if (m.Success)
+    {
+        minPrice = decimal.Parse(m.Groups[1].Value);
+        maxPrice = decimal.Parse(m.Groups[2].Value);
+    }
+
+    //----------------------------------------------------------------
+    // 1️⃣  Pull the *candidate* set FROM SQL using the numeric filter
+    //----------------------------------------------------------------
+    using var scope = _scopeFactory.CreateScope();
+    var db = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
+
+    var candidatesQ = db.Properties.AsNoTracking();
+    if (minPrice is not null) candidatesQ = candidatesQ.Where(p => p.PricePerNight >= minPrice);
+    if (maxPrice is not null) candidatesQ = candidatesQ.Where(p => p.PricePerNight <= maxPrice);
+
+    var candidates = await candidatesQ.ToListAsync();
+    if (candidates.Count == 0) return Array.Empty<PropertyDto>();   // nothing satisfies the filter
+
+    //----------------------------------------------------------------
+    // 2️⃣  Embed the *query* once
+    //----------------------------------------------------------------
+    var embReq = new { model = "nomic-embed-text-v1.5", input = new[] { query } };
+    var embRes = await _lmClient.PostAsJsonAsync("v1/embeddings", embReq);
+    embRes.EnsureSuccessStatusCode();
+
+    using var embDoc = await embRes.Content.ReadFromJsonAsync<JsonDocument>();
+    var qVec = embDoc.RootElement.GetProperty("data")[0]
+                 .GetProperty("embedding")
+                 .EnumerateArray().Select(e => e.GetSingle()).ToArray();
+
+    //----------------------------------------------------------------
+    // 3️⃣  Cosine-rank only inside the **filtered** candidate list
+    //----------------------------------------------------------------
+    var ranked = candidates
+        .Select(p =>
         {
-            if (_embeddings.Length == 0)
-                throw new InvalidOperationException("Index not yet built.");
+            var idx = Array.FindIndex(_properties, x => x.Id == p.Id);
+            var score = idx >= 0 ? Cosine(qVec, _embeddings[idx]) : -1;
+            return (prop: p, score);
+        })
+        .Where(x => x.score >= 0)
+        .OrderByDescending(x => x.score)
+        .Take(topK)
+        .Select(x => x.prop)
+        .ToList();
 
-            var qr = new
-            {
-                model = "nomic-embed-text-v1.5",
-                input = new[] { query }
-            };
-            var r = await _lmClient.PostAsJsonAsync("v1/embeddings", qr);
-            r.EnsureSuccessStatusCode();
+    //----------------------------------------------------------------
+    // 4️⃣  Fetch one thumbnail each and project → DTO
+    //----------------------------------------------------------------
+    var thumbs = await db.PropertyImages
+        .Where(i => ranked.Select(p => p.Id).Contains(i.PropertyId))
+        .GroupBy(i => i.PropertyId)
+        .Select(g => new { g.Key, Url = g.First().Url })
+        .ToDictionaryAsync(x => x.Key, x => x.Url);
 
-            using var j = await r.Content.ReadFromJsonAsync<JsonDocument>();
-            var qvec = j.RootElement
-                        .GetProperty("data")[0]
-                        .GetProperty("embedding")
-                        .EnumerateArray()
-                        .Select(e => e.GetSingle())
-                        .ToArray();
+    var dtos = ranked.Select(p => new PropertyDto
+    {
+        Id            = p.Id,
+        Name          = p.Name,
+        Location      = p.Location,
+        Description   = p.Description,
+        PricePerNight = p.PricePerNight,
+        Type          = p.Type,
+        ProprietaireId= p.ProprietaireId,
+        FirstImage    = thumbs.TryGetValue(p.Id, out var url) ? url : null,
 
-            // cosine similarity
-            var best = _embeddings
-                .Select((vec, i) => (score: Cosine(qvec, vec), idx: i))
-                .OrderByDescending(x => x.score)
-                .Take(topK)
-                .Select(x => _properties[x.idx])
-                .ToArray();
+        Wifi                  = p.Wifi,
+        Kitchen               = p.Kitchen,
+        Pool                  = p.Pool,
+        HotTub                = p.HotTub,
+        AirConditioning       = p.AirConditioning,
+        Heating               = p.Heating,
+        Washer                = p.Washer,
+        Dryer                 = p.Dryer,
+        FreeParkingOnPremises = p.FreeParkingOnPremises,
+        BbqGrill              = p.BbqGrill,
+        Gym                   = p.Gym,
+        PetsAllowed           = p.PetsAllowed,
+        SmokeAlarm            = p.SmokeAlarm,
+        CarbonMonoxideAlarm   = p.CarbonMonoxideAlarm,
+        FirstAidKit           = p.FirstAidKit,
+        HairDryer             = p.HairDryer,
+        CoffeeMaker           = p.CoffeeMaker,
+        IsAvailable           = p.IsAvailable
+    })
+    .ToArray();
 
-            return best;
-        }
+    return dtos;
+}
 
         private static float Cosine(float[] a, float[] b)
         {

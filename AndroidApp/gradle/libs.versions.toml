@@ -12,6 +12,7 @@ picasso = "2.71828"
 picassoOkhttp3Downloader = "1.1.0"
 picassoVersion = "2.8.0"
 volley = "1.2.1"
+firebaseCrashlyticsBuildtools = "3.0.3"
 
 [libraries]
 junit = { group = "junit", name = "junit", version.ref = "junit" }
@@ -26,6 +27,7 @@ picasso = { module = "com.squareup.picasso:picasso", version.ref = "picasso" }
 picasso-okhttp3-downloader = { module = "com.squareup.picasso:picasso-okhttp3-downloader", version.ref = "picassoOkhttp3Downloader" }
 picasso-v280 = { module = "com.squareup.picasso:picasso", version.ref = "picassoVersion" }
 volley = { module = "com.android.volley:volley", version.ref = "volley" }
+firebase-crashlytics-buildtools = { group = "com.google.firebase", name = "firebase-crashlytics-buildtools", version.ref = "firebaseCrashlyticsBuildtools" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }

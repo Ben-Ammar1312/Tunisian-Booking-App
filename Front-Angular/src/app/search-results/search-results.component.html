@@ -1,0 +1,38 @@
+<app-client-navbar></app-client-navbar>
+
+<div class="container py-5 page-content">
+  <h2 class="fw-bold mb-4 text-center">
+    {{ results.length ? 'Résultats pour ‘' + query + '’' : 'Aucun résultat 😕' }}
+  </h2>
+
+  <div class="row g-4" *ngIf="results.length">
+    <ng-container *ngFor="let property of results">
+      <div class="col-12 col-sm-6 col-md-4 col-lg-3">
+        <div class="card h-100 shadow-sm border-0">
+
+          <img
+            [src]="property.firstImage || 'assets/default-image.jpg'"
+            class="card-img-top object-fit-cover"
+            style="height: 180px;" alt="{{ property.name }}" />
+
+          <div class="card-body d-flex flex-column">
+            <h6 class="card-title fw-semibold mb-1">{{ property.name }}</h6>
+            <p class="small text-muted mb-1">
+              <i class="bi bi-geo-alt me-1"></i>{{ property.location }}
+            </p>
+            <p class="fw-bold text-primary mb-2">
+              {{ property.pricePerNight | currency:'TND':'symbol':'1.0-0' }}
+            </p>
+
+            <a [routerLink]="['/property', property.id]"
+               class="btn btn-outline-primary btn-sm mt-auto w-100">
+              Détails
+            </a>
+          </div>
+        </div>
+      </div>
+    </ng-container>
+  </div>
+</div>
+
+

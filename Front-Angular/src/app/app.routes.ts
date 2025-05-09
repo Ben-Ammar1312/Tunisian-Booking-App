@@ -9,6 +9,7 @@ import {AjouterAnnonceComponent} from './ajouter-annonce/ajouter-annonce.compone
 import {PropertyDetailsComponent} from './property-details/property-details.component';
 import {ChatComponent} from './chat/chat.component';
 import {MesAnnoncesComponent} from './mes-annonces/mes-annonces.component';
+import {SearchResultsComponent} from './search-results/search-results.component';
 
 export const routes: Routes = [
   { path: 'ajouter-annonce', component: AjouterAnnonceComponent },
@@ -22,6 +23,7 @@ export const routes: Routes = [
   { path: 'dashboard-client', component: DashboardClientComponent },
   { path: 'dashboard-proprietaire', component: DashboardProprietaireComponent },
   { path: 'chat', component: ChatComponent },
+  { path: 'search',component: SearchResultsComponent}
 ];
 
 @NgModule({

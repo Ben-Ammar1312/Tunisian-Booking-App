@@ -1,4 +1,3 @@
-// com/example/darna/HomeActivity.java
 package com.example.darna;
 
 import android.content.Intent;
@@ -12,6 +11,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.android.volley.DefaultRetryPolicy;
 import com.android.volley.toolbox.JsonArrayRequest;
 import com.example.darna.adapter.PropertyAdapter;
+import com.example.darna.fragment.SearchFragment;
 import com.example.darna.model.Property;
 
 import org.json.JSONArray;
@@ -34,7 +34,7 @@ public class HomeActivity extends AppCompatActivity {
         rv = findViewById(R.id.recyclerViewProperties);
         rv.setLayoutManager(new LinearLayoutManager(this));
 
-        adapter = new PropertyAdapter(list, p -> {
+        adapter = new PropertyAdapter( p -> {
             // on-click → open details
             Intent i = new Intent(this, PropertyDetailsActivity.class);
             i.putExtra("propertyId", p.id);
@@ -43,6 +43,10 @@ public class HomeActivity extends AppCompatActivity {
         rv.setAdapter(adapter);
 
         fetchProperties();
+        getSupportFragmentManager()
+                .beginTransaction()
+                .replace(R.id.container, new SearchFragment())
+                .commit();
     }
 
     private void fetchProperties() {
@@ -59,7 +63,7 @@ public class HomeActivity extends AppCompatActivity {
     }
 
     private void onResponse(JSONArray arr) {
-        list.clear();
+        List<Property> list = new ArrayList<>();
         for (int i = 0; i < arr.length(); i++) {
             JSONObject o = arr.optJSONObject(i);
             if (o == null) continue;
@@ -75,10 +79,15 @@ public class HomeActivity extends AppCompatActivity {
                 Log.e("HOME_FETCH", "parse error", ex);
             }
         }
-        adapter.notifyDataSetChanged();
+        adapter.submitList(list);
     }
 
     private void onError(Throwable t) {
         Log.e("HOME_FETCH", t.toString());
     }
-}
+    public void openDetails(Property p) {
+        Intent i = new Intent(this, PropertyDetailsActivity.class);
+        i.putExtra("propertyId", p.id);
+        startActivity(i);
+    }
+    }

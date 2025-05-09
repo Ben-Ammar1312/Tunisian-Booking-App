@@ -9,8 +9,9 @@ import android.widget.ImageView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.bumptech.glide.Glide;
 import com.example.darna.R;
-import com.squareup.picasso.Picasso;
+
 
 import java.util.List;
 
@@ -31,13 +32,10 @@ public class ImagePagerAdapter
     @Override
     public void onBindViewHolder(@NonNull VH h, int position) {
         String url = urls.get(position);
-        Log.d("IMG_DEBUG", url);
-
-        Picasso.get()
+        Glide.with(h.image.getContext())
                 .load(url)
                 .placeholder(R.drawable.ic_placeholder)
-                .error(R.drawable.ic_broken_image)   // create once exactly like placeholder
-                .fit()                               // scales to ImageView bounds
+                .error(R.drawable.ic_broken_image)
                 .centerCrop()
                 .into(h.image);
     }

@@ -45,12 +45,14 @@ export class ClientNavbarComponent implements AfterViewInit {
     const q = this.searchQuery.trim();
     if (!q) return;
 
-    this.ai.search(q, 5).subscribe({
-      next: props => {
-        this.searchResults = props;
-        console.log('search results:', props);
-        // e.g. navigate to a search‑results page:
-        // this.router.navigate(['/search'], { queryParams: { q } });
+    this.ai.search(q).subscribe({
+      next: hits => {
+        // navigate and push the results through the router state
+        this.router.navigate(['/search'], {
+          queryParams: { q },
+          state:      { results: hits }
+        });
+        this.searchQuery = '';             // clear input if you want
       },
       error: err => console.error('Search error', err)
     });
