@@ -33,8 +33,9 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        Log.d("DBG", "onCreate start");
         setContentView(R.layout.activity_main);  // your XML layout
-
+        Log.d("DBG", "after setContentView");
         emailEditText = findViewById(R.id.emailInput);     // make sure these IDs match your XML
         passwordEditText = findViewById(R.id.passwordInput);
         loginButton = findViewById(R.id.loginButton);
@@ -49,6 +50,10 @@ public class MainActivity extends AppCompatActivity {
         registerButton.setOnClickListener(v -> {
             registerUser();
         });
+    }
+    @Override protected void onResume() {
+        super.onResume();
+        Log.d("DBG", "onResume");
     }
 
     private void registerUser() {
@@ -136,7 +141,10 @@ public class MainActivity extends AppCompatActivity {
                 headers.put("Content-Type", "application/json");
                 return headers;
             }
+
         };
+
+
 
         jsonObjectRequest.setRetryPolicy(new DefaultRetryPolicy(
                 10000, // 10 sec timeout
