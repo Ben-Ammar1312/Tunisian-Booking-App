@@ -23,7 +23,7 @@ namespace Darna.Controllers
         {
             if (string.IsNullOrWhiteSpace(query))
                 return BadRequest("query is required");
-            var props = await _search.SearchAsync(query, topK);
+            var (props,_) = await _search.SearchAsync(query, topK,0.15f);
             return Ok(props);
         }
     }

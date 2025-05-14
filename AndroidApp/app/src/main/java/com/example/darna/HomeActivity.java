@@ -1,25 +1,148 @@
 package com.example.darna;
-
+import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
+import android.util.Log;
+import android.widget.Toast;
+import android.view.Menu;
+import android.view.MenuItem;
+import androidx.appcompat.widget.Toolbar;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
-import android.view.View;
-import android.widget.TextView;
+import com.android.volley.DefaultRetryPolicy;
+import com.android.volley.Request;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.JsonArrayRequest;
+import com.example.darna.adapter.PropertyAdapter;
+import com.example.darna.fragment.SearchFragment;
+import com.example.darna.model.Property;
 
+import org.json.JSONArray;
+import org.json.JSONObject;
 
-import com.example.darna.R;
+import java.util.ArrayList;
+import java.util.List;
 
-public class HomeActivity extends AppCompatActivity {
+public class HomeActivity extends AppCompatActivity
+        implements SearchFragment.SearchListener {
+
+    private final List<Property> list = new ArrayList<>();
+    private PropertyAdapter adapter;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_home);
+        Toolbar toolbar = findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
 
-        TextView textView = new TextView(this);
-        textView.setText("You Are Logged In");
-        textView.setTextSize(24);
-        textView.setGravity(View.TEXT_ALIGNMENT_CENTER);
+        // 1) RecyclerView
+        RecyclerView rv = findViewById(R.id.recyclerViewProperties);
+        rv.setLayoutManager(new LinearLayoutManager(this));
+        adapter = new PropertyAdapter(this::openDetails);
+        rv.setAdapter(adapter);
 
-        setContentView(textView); // Display the text centered on the screen
+        // 2) search fragment
+        getSupportFragmentManager().beginTransaction()
+                .replace(R.id.container, new SearchFragment(), "SEARCH")
+                .commit();
+
+        // 3) load the full list
+        fetchProperties();
     }
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.main_menu, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        if (item.getItemId() == R.id.action_chat) {
+            // launch the chat screen
+            startActivity(new Intent(this, ChatActivity.class));
+            return true;
+        }
+        return super.onOptionsItemSelected(item);
+    }
+    private void fetchProperties() {
+        String url = getString(R.string.api_base_url) + "/property";
+        JsonArrayRequest req = new JsonArrayRequest(url,
+                this::onResponse, this::onError);
+        req.setRetryPolicy(new DefaultRetryPolicy(15000,1,1f));
+        VolleySingleton.getInstance(this)
+                .getRequestQueue()
+                .add(req);
+    }
+
+    private void onResponse(JSONArray arr) {
+        list.clear();
+        for (int i=0; i<arr.length(); i++) {
+            JSONObject o = arr.optJSONObject(i);
+            if (o==null) continue;
+            Property p = new Property();
+            p.id            = o.optInt("id");
+            p.name          = o.optString("name");
+            p.location      = o.optString("location");
+            p.pricePerNight = o.optDouble("pricePerNight");
+            p.firstImage    = o.optString("firstImage", null);
+            list.add(p);
+        }
+        adapter.submitList(list);
+        Log.d("HOME_FETCH","fetched "+list.size());
+    }
+
+    private void onError(VolleyError e) {
+        Log.e("HOME_FETCH","error",e);
+        Toast.makeText(this,"Fetch failed",Toast.LENGTH_SHORT).show();
+    }
+
+    @Override  // from SearchFragment
+    public void onSearch(String query) {
+        if (query.isEmpty()) {
+            adapter.submitList(list);
+            return;
+        }
+        String url = getString(R.string.api_base_url)
+                + "/Search?query=" + Uri.encode(query)
+                + "&topK=10";
+        JsonArrayRequest req = new JsonArrayRequest(
+                Request.Method.GET, url, null,
+                arr -> {
+                    List<Property> results = new ArrayList<>();
+                    for (int i=0;i<arr.length();i++){
+                        JSONObject o = arr.optJSONObject(i);
+                        if (o==null) continue;
+                        Property p = new Property();
+                        p.id            = o.optInt("id");
+                        p.name          = o.optString("name");
+                        p.location      = o.optString("location");
+                        p.pricePerNight = o.optDouble("pricePerNight");
+                        p.firstImage    = o.optString("firstImage",null);
+                        results.add(p);
+                    }
+                    adapter.submitList(results);
+                },
+                err -> {
+                    Toast.makeText(this,
+                            "Recherche échouée: "+err.getMessage(),
+                            Toast.LENGTH_SHORT).show();
+                }
+        );
+        VolleySingleton.getInstance(this)
+                .getRequestQueue()
+                .add(req);
+    }
+
+    private void openDetails(Property p) {
+        Intent i = new Intent(this, PropertyDetailsActivity.class);
+        i.putExtra("propertyId", p.id);
+        startActivity(i);
+    }
+
+
 }
+
+

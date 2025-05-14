@@ -2,4 +2,20 @@
 <resources>
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
+    <color name="purple_500">#6200EE</color>
+    <color name="purple_700">#3700B3</color>
+    <color name="accent">#03DAC5</color>
+    <color name="teal_200">#03DAC5</color>
+    <color name="teal_700">#018786</color>
+    <color name="primary">#242934</color>
+    <!-- Darna teal & sand -->
+    <color name="darna_teal">#00474F</color>
+    <color name="darna_sand">#FFF6E3</color>
+
+    <!-- Material-3 dynamic tones – FIXED -->
+    <color name="md_theme_light_primary">@color/darna_teal</color>
+    <color name="md_theme_light_onPrimary">@color/darna_sand</color>
+    <color name="md_theme_light_outline">#757575</color>
+
+
 </resources>

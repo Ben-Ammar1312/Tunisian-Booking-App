@@ -1,6 +1,8 @@
 package com.example.darna;
 
 import android.content.Context;
+
+import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.toolbox.Volley;
 
@@ -27,4 +29,9 @@ public class VolleySingleton {
         }
         return requestQueue;
     }
+
+    public void addToRequestQueue(Request<?> req){
+        getRequestQueue().add(req);
+    }
+    public static VolleySingleton get(Context c){ return getInstance(c); }
 }

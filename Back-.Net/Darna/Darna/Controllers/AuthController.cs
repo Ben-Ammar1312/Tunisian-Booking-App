@@ -16,9 +16,11 @@ namespace Darna.Controllers
     public class AuthController : ControllerBase
     {
         private readonly ApplicationDbContext _context;
-
-        public AuthController(ApplicationDbContext context)
+        
+        private readonly IConfiguration _configuration;
+        public AuthController(ApplicationDbContext context, IConfiguration configuration)
         {
+            _configuration = configuration;
             _context = context;
         }
 
@@ -85,9 +87,9 @@ namespace Darna.Controllers
             // Provide a JTI (unique token ID) for best practices
             new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString())
         };
-
+            authClaims.Add(new Claim(ClaimTypes.Role, user.GetType().Name));
             // 2) The same key you used in Program.cs
-            var authSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes("My32CharacterMinimumSuperSecretKey!!!"));
+            var authSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["Jwt:Key"]));
 
             // 3) Create the token
             var token = new JwtSecurityToken(

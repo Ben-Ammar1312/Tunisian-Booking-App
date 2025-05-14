@@ -10,6 +10,8 @@
         public string Type { get; set; } = "";
         public int ProprietaireId { get; set; }
         public List<string>? Images { get; set; }
+        
+        public string? FirstImage   { get; set; } 
 
         // Amenities
         public bool Wifi { get; set; }

@@ -7,6 +7,7 @@ import {ClientNavbarComponent} from '../shared/client-navbar/client-navbar.compo
 import {PropNavbarComponent} from '../shared/prop-navbar/prop-navbar.component';
 import {FormsModule} from '@angular/forms';
 import {environment} from '../../environments/environments';
+import {PaymentCardComponent} from '../payment-card/payment-card.component';
 
 
 @Component({

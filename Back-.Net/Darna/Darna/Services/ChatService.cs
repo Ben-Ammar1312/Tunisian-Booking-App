@@ -20,14 +20,15 @@ namespace Darna.Services
         {
             var payload = new
             {
-                model = "mistral-7b-instruct-v0.3",  // whichever LL model you’ve loaded
+                model = "llama3-8b-instruct",  
                 messages = new[]
                 {
-                   
-                    new { role = "user",      content = userPrompt   }
+                    new { role = "system", content = systemPrompt.Trim() },
+                    new { role = "user",      content = userPrompt.Trim()   }
+                    
                 },
-                max_tokens = 1024,
-                temperature = 0.7f
+                max_tokens = 512,
+                temperature = 0.3f
             };
 
             // this will POST to BASEADDRESS + "v1/chat/completions"
