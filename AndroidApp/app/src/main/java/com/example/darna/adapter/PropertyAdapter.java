@@ -64,6 +64,7 @@ public class PropertyAdapter extends RecyclerView.Adapter<PropertyAdapter.VH> {
         if (list != null) {
             items.addAll(list);
         }
+        Log.d("PropertyAdapter", "submitList size=" + items.size());
         notifyDataSetChanged();
     }
 

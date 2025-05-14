@@ -1,15 +1,18 @@
 package com.example.darna;
-
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
 import android.widget.Toast;
-
+import android.view.Menu;
+import android.view.MenuItem;
+import androidx.appcompat.widget.Toolbar;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.android.volley.DefaultRetryPolicy;
+import com.android.volley.Request;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonArrayRequest;
 import com.example.darna.adapter.PropertyAdapter;
@@ -22,115 +25,124 @@ import org.json.JSONObject;
 import java.util.ArrayList;
 import java.util.List;
 
-public class HomeActivity extends AppCompatActivity {
+public class HomeActivity extends AppCompatActivity
+        implements SearchFragment.SearchListener {
 
-    private RecyclerView rv;
+    private final List<Property> list = new ArrayList<>();
     private PropertyAdapter adapter;
-    private List<Property> list = new ArrayList<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_home);
+        Toolbar toolbar = findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
 
-        rv = findViewById(R.id.recyclerViewProperties);
+        // 1) RecyclerView
+        RecyclerView rv = findViewById(R.id.recyclerViewProperties);
         rv.setLayoutManager(new LinearLayoutManager(this));
-
-        // on-click → open details
-        // Now calling openDetails from the PropertyAdapter onClick
-        // In onCreate:
         adapter = new PropertyAdapter(this::openDetails);
         rv.setAdapter(adapter);
 
+        // 2) search fragment
+        getSupportFragmentManager().beginTransaction()
+                .replace(R.id.container, new SearchFragment(), "SEARCH")
+                .commit();
 
-        rv.setAdapter(adapter);
-
+        // 3) load the full list
         fetchProperties();
-
-        try {
-            getSupportFragmentManager()
-                    .beginTransaction()
-                    .replace(R.id.container, new SearchFragment(), SearchFragment.class.getSimpleName())
-                    .commit();
-        } catch (Exception e) {
-            e.printStackTrace(); // Logs the full stack trace to Logcat
-            Log.e("FragmentError", "Error committing fragment transaction: " + e.getMessage());
-            Toast.makeText(this, "Fragment error: " + e.getMessage(), Toast.LENGTH_LONG).show(); // Optional: shows a toast
-        }
+    }
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.main_menu, menu);
+        return true;
     }
 
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        if (item.getItemId() == R.id.action_chat) {
+            // launch the chat screen
+            startActivity(new Intent(this, ChatActivity.class));
+            return true;
+        }
+        return super.onOptionsItemSelected(item);
+    }
     private void fetchProperties() {
         String url = getString(R.string.api_base_url) + "/property";
-        JsonArrayRequest req = new JsonArrayRequest(
-                url,
-                this::onResponse,
-                this::onError
-        );
-        req.setRetryPolicy(new DefaultRetryPolicy(15_000, 1, 1f));
+        JsonArrayRequest req = new JsonArrayRequest(url,
+                this::onResponse, this::onError);
+        req.setRetryPolicy(new DefaultRetryPolicy(15000,1,1f));
         VolleySingleton.getInstance(this)
                 .getRequestQueue()
                 .add(req);
     }
 
     private void onResponse(JSONArray arr) {
-        List<Property> fullList = new ArrayList<>();
-        for (int i = 0; i < arr.length(); i++) {
+        list.clear();
+        for (int i=0; i<arr.length(); i++) {
             JSONObject o = arr.optJSONObject(i);
-            if (o == null) continue;
-            try {
-                Property p = new Property();
-                p.id = o.getInt("id");
-                p.name = o.getString("name");
-                p.location = o.getString("location");
-                p.pricePerNight = o.getDouble("pricePerNight");
-                p.firstImage = o.optString("firstImage", null);
-                fullList.add(p);
-            } catch (Exception ex) {
-                Log.e("HOME_FETCH", "parse error", ex);
-            }
+            if (o==null) continue;
+            Property p = new Property();
+            p.id            = o.optInt("id");
+            p.name          = o.optString("name");
+            p.location      = o.optString("location");
+            p.pricePerNight = o.optDouble("pricePerNight");
+            p.firstImage    = o.optString("firstImage", null);
+            list.add(p);
         }
-        adapter.submitList(fullList);
-
-        // Log the size of the list
-        Log.d("HOME_FETCH", "Number of properties fetched: " + fullList.size());
-
-        // Send fullList to the SearchFragment via a Bundle
-        if (!fullList.isEmpty()) {
-            SearchFragment searchFragment = (SearchFragment) getSupportFragmentManager()
-                    .findFragmentByTag(SearchFragment.class.getSimpleName());
-            if (searchFragment == null) {
-                searchFragment = new SearchFragment();
-            }
-
-            Bundle bundle = new Bundle();
-            bundle.putSerializable("fullList", (ArrayList<Property>) fullList);
-            searchFragment.setArguments(bundle);
-
-            getSupportFragmentManager()
-                    .beginTransaction()
-                    .replace(R.id.container, searchFragment, SearchFragment.class.getSimpleName())
-                    .commit();
-
-            // Directly update the SearchFragment adapter
-            searchFragment.updateAdapter(fullList);
-        } else {
-            Log.e("HOME_FETCH", "Property list is empty or null");
-        }
+        adapter.submitList(list);
+        Log.d("HOME_FETCH","fetched "+list.size());
     }
 
-    private void onError(VolleyError error) {
-        Log.e("HOME_FETCH", "Error fetching properties", error);
+    private void onError(VolleyError e) {
+        Log.e("HOME_FETCH","error",e);
+        Toast.makeText(this,"Fetch failed",Toast.LENGTH_SHORT).show();
     }
 
-    // New method to open details for a property
-    public void openDetails(Property p) {
+    @Override  // from SearchFragment
+    public void onSearch(String query) {
+        if (query.isEmpty()) {
+            adapter.submitList(list);
+            return;
+        }
+        String url = getString(R.string.api_base_url)
+                + "/Search?query=" + Uri.encode(query)
+                + "&topK=10";
+        JsonArrayRequest req = new JsonArrayRequest(
+                Request.Method.GET, url, null,
+                arr -> {
+                    List<Property> results = new ArrayList<>();
+                    for (int i=0;i<arr.length();i++){
+                        JSONObject o = arr.optJSONObject(i);
+                        if (o==null) continue;
+                        Property p = new Property();
+                        p.id            = o.optInt("id");
+                        p.name          = o.optString("name");
+                        p.location      = o.optString("location");
+                        p.pricePerNight = o.optDouble("pricePerNight");
+                        p.firstImage    = o.optString("firstImage",null);
+                        results.add(p);
+                    }
+                    adapter.submitList(results);
+                },
+                err -> {
+                    Toast.makeText(this,
+                            "Recherche échouée: "+err.getMessage(),
+                            Toast.LENGTH_SHORT).show();
+                }
+        );
+        VolleySingleton.getInstance(this)
+                .getRequestQueue()
+                .add(req);
+    }
+
+    private void openDetails(Property p) {
         Intent i = new Intent(this, PropertyDetailsActivity.class);
         i.putExtra("propertyId", p.id);
         startActivity(i);
     }
+
+
 }
-
-
-
 
 

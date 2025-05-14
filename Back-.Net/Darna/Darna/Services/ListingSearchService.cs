@@ -18,6 +18,8 @@ namespace Darna.Services
         private readonly HttpClient _lmClient;
         private float[][] _embeddings = Array.Empty<float[]>();
         private Property[] _properties = Array.Empty<Property>();
+        private readonly string _embModel; 
+        private Dictionary<int, float[]> _vecById = new();
 
         public ListingSearchService(
             IServiceScopeFactory scopeFactory,
@@ -25,7 +27,8 @@ namespace Darna.Services
         {
             _scopeFactory = scopeFactory;
             // this matches the named client in Program.cs
-            _lmClient = httpFactory.CreateClient("lmstudio");
+            _lmClient     = httpFactory.CreateClient("llocal-lm");
+            _embModel     = "bge-m3";  
         }
 
         /// <summary>
@@ -48,7 +51,7 @@ namespace Darna.Services
 
             var embedReq = new
             {
-                model = "nomic-embed-text-v1.5",
+                model = _embModel,
                 input = texts
             };
 
@@ -69,29 +72,42 @@ namespace Darna.Services
               .ToArray();
 
             _properties = all.ToArray();
+            _vecById = Enumerable.Range(0, _properties.Length)
+                .ToDictionary(i => _properties[i].Id,
+                    i => _embeddings[i]);
         }
 
         /// <summary>
         /// Embed the query → cosine against your in‑memory index → top K.
         /// </summary>
-public async Task<PropertyDto[]> SearchAsync(string query, int topK = 5)
+public async Task<(PropertyDto[] hits , float bestScore)> SearchAsync(string query, int topK = 5, float minCosine= 0.0f)
 {
     // ───────────────────────────────────────────────────────────────
     // 0️⃣  Extract numeric price filters from the query
     //     (very small regex – covers 99 % of casual queries)
     // ───────────────────────────────────────────────────────────────
     decimal? minPrice = null, maxPrice = null;
-    var m = Regex.Match(query, @"(?i)(under|below|less\s+than)\s+(\d+)");
-    if (m.Success)            maxPrice = decimal.Parse(m.Groups[2].Value);
-    m = Regex.Match(query, @"(?i)(over|above|more\s+than)\s+(\d+)");
-    if (m.Success)            minPrice = decimal.Parse(m.Groups[2].Value);
-    m = Regex.Match(query, @"(?i)between\s+(\d+)\s+and\s+(\d+)");
-    if (m.Success)
-    {
-        minPrice = decimal.Parse(m.Groups[1].Value);
-        maxPrice = decimal.Parse(m.Groups[2].Value);
-    }
+    
 
+// English patterns
+    Match m = Regex.Match(query, @"(?i)\b(under|below|less\s+than)\s+(\d+)");
+    if (m.Success) maxPrice = decimal.Parse(m.Groups[2].Value);
+
+    m = Regex.Match(query, @"(?i)\b(over|above|more\s+than)\s+(\d+)");
+    if (m.Success) minPrice = decimal.Parse(m.Groups[2].Value);
+
+    m = Regex.Match(query, @"(?i)\bbetween\s+(\d+)\s+and\s+(\d+)");
+    if (m.Success) { minPrice = decimal.Parse(m.Groups[1].Value); maxPrice = decimal.Parse(m.Groups[2].Value); }
+
+// French patterns
+    m = Regex.Match(query, @"(?i)\b(moins\s+de|sous)\s+(\d+)");
+    if (m.Success) maxPrice = decimal.Parse(m.Groups[2].Value);
+
+    m = Regex.Match(query, @"(?i)\b(plus\s+de|au[\- ]dessus\s+de)\s+(\d+)");
+    if (m.Success) minPrice = decimal.Parse(m.Groups[2].Value);
+
+    m = Regex.Match(query, @"(?i)\bentre\s+(\d+)\s+et\s+(\d+)");
+    if (m.Success) { minPrice = decimal.Parse(m.Groups[1].Value); maxPrice = decimal.Parse(m.Groups[2].Value); }
     //----------------------------------------------------------------
     // 1️⃣  Pull the *candidate* set FROM SQL using the numeric filter
     //----------------------------------------------------------------
@@ -103,12 +119,12 @@ public async Task<PropertyDto[]> SearchAsync(string query, int topK = 5)
     if (maxPrice is not null) candidatesQ = candidatesQ.Where(p => p.PricePerNight <= maxPrice);
 
     var candidates = await candidatesQ.ToListAsync();
-    if (candidates.Count == 0) return Array.Empty<PropertyDto>();   // nothing satisfies the filter
+    if (candidates.Count == 0) {return (Array.Empty<PropertyDto>(), 0f);}
 
     //----------------------------------------------------------------
     // 2️⃣  Embed the *query* once
     //----------------------------------------------------------------
-    var embReq = new { model = "nomic-embed-text-v1.5", input = new[] { query } };
+    var embReq = new { model =_embModel, input = new[] { query } };
     var embRes = await _lmClient.PostAsJsonAsync("v1/embeddings", embReq);
     embRes.EnsureSuccessStatusCode();
 
@@ -120,19 +136,26 @@ public async Task<PropertyDto[]> SearchAsync(string query, int topK = 5)
     //----------------------------------------------------------------
     // 3️⃣  Cosine-rank only inside the **filtered** candidate list
     //----------------------------------------------------------------
-    var ranked = candidates
+    
+    var rankedTuples = candidates
         .Select(p =>
         {
-            var idx = Array.FindIndex(_properties, x => x.Id == p.Id);
-            var score = idx >= 0 ? Cosine(qVec, _embeddings[idx]) : -1;
+            var score = _vecById.TryGetValue(p.Id, out var vec)
+                ? Cosine(qVec, vec)
+                : -1;
             return (prop: p, score);
         })
-        .Where(x => x.score >= 0)
-        .OrderByDescending(x => x.score)
+        .Where(t => t.score >= minCosine)          // threshold
+        .OrderByDescending(t => t.score)
         .Take(topK)
-        .Select(x => x.prop)
-        .ToList();
+        .ToList();                             // materialise once
 
+// best score for ChatController guard
+    float topScore = rankedTuples.Count > 0 ? rankedTuples[0].score : 0;
+
+// finally keep only the properties
+    var ranked = rankedTuples.Select(t => t.prop).ToList();
+        
     //----------------------------------------------------------------
     // 4️⃣  Fetch one thumbnail each and project → DTO
     //----------------------------------------------------------------
@@ -173,8 +196,8 @@ public async Task<PropertyDto[]> SearchAsync(string query, int topK = 5)
         IsAvailable           = p.IsAvailable
     })
     .ToArray();
-
-    return dtos;
+    Console.WriteLine($"[RAG] query=\"{query}\"  topScore={topScore:F3}  hits={rankedTuples.Count}");
+    return (dtos,topScore);
 }
 
         private static float Cosine(float[] a, float[] b)

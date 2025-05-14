@@ -39,8 +39,7 @@ public class ChatAdapter extends RecyclerView.Adapter<ChatAdapter.VH>{
         h.tv.setText(m.text);
         h.tv.setBackgroundResource(m.role==ChatMessage.Role.USER?
                 R.drawable.bg_user : R.drawable.bg_bot);
-        ((LinearLayout.LayoutParams)h.tv.getLayoutParams()).gravity =
-                m.role==ChatMessage.Role.USER? Gravity.END:Gravity.START;
+
     }
     @Override public int getItemCount(){ return data.size(); }
     public void add(ChatMessage m){ data.add(m); notifyItemInserted(data.size()-1); }

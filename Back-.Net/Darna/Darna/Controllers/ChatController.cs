@@ -1,6 +1,7 @@
 ﻿// Darna/Controllers/ChatController.cs
 using System.Linq;
 using System.Threading.Tasks;
+using System.Text.RegularExpressions;
 using Microsoft.AspNetCore.Mvc;
 using Darna.DTOs;
 using Darna.Services;
@@ -21,11 +22,18 @@ namespace Darna.Controllers
         public async Task<IActionResult> Post([FromBody] ChatDto dto)
         {
             // 1) RAG search
-            var hits = await _search.SearchAsync(dto.UserInput, dto.TopK);
+            var (hits,best) = await _search.SearchAsync(dto.UserInput, dto.TopK,0.30f);
+            var normalized = dto.UserInput.Trim().ToLowerInvariant();
+            if (Regex.IsMatch(normalized, @"^(bonjour|salut|hello|hi)\b"))
+            {
+                var greet = "Bonjour ! Comment puis-je vous aider à trouver un logement ?";
+                return Ok(new { reply = greet });
+            }
 
             // 2) build optional context block
             string contextBlock = "";
-            if (hits.Any())
+            
+            if (hits.Length > 0 && best >= 0.45f)  
             {
                 var items = hits.Select(p =>
                     $"{p.Name}: {p.Description}\nLieu: {p.Location}, Prix: {p.PricePerNight} TND");
@@ -40,7 +48,8 @@ namespace Darna.Controllers
                 "Tu es DarnaBot, un assistant de location et vous parlez directement a nos cliens pour leur donner des informations sur notre site et listings  " +
                 "Utilise le contexte base de données uniquement s’il est pertinent,  " +
                 "sinon répond grâce à ta connaissance générale du domaine. ";
-
+            if (contextBlock == "")
+                systemPrompt += " Si aucun contexte n'est fourni, réponds simplement.";
             // 4) user prompt
             var userPrompt = contextBlock
                            + $"Question: {dto.UserInput}";

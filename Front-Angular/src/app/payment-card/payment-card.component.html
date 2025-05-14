@@ -1,0 +1,5 @@
+<div id="card-element" class="stripe-element"></div>
+
+<button (click)="pay()" [disabled]="loading">
+  {{ loading ? 'Traitement…' : 'Payer' }}
+</button>

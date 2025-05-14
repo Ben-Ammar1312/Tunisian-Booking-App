@@ -24,7 +24,7 @@ namespace Darna.Models
         public Client? Client { get; set; }
 
         [Required]
-        public int HouseId { get; set; }
+        public int PropertyId { get; set; }
 
         [ForeignKey("PropertyId")]
         public Property? Property { get; set; }

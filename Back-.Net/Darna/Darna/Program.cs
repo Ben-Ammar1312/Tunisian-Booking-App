@@ -4,7 +4,7 @@ using Darna.Services;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
-
+using Darna.DTOs;
 var builder = WebApplication.CreateBuilder(args);
 
 // 1) CORS — allow everything (DEV only)
@@ -51,24 +51,31 @@ builder.Services.AddDbContext<ApplicationDbContext>(opt =>
 );
 
 // 5) HTTP clients & your search service
-//builder.Services.AddHttpClient("lmstudio", c =>
-//    c.BaseAddress = new Uri("http://127.0.0.1:1234/"));
-//builder.Services.AddHttpClient<ChatService>(c =>
-//    c.BaseAddress = new Uri("http://127.0.0.1:1234/"));
-//builder.Services.AddSingleton<ListingSearchService>();
+builder.Services.AddHttpClient<ChatService>("llocal-lm", c =>
+    c.BaseAddress = new Uri("http://127.0.0.1:1234/"));
+
+// ListingSearchService pulls llocal-lm via IHttpClientFactory
+builder.Services.AddSingleton<ListingSearchService>();
+
+
+Stripe.StripeConfiguration.ApiKey =
+    builder.Configuration["Stripe:SecretKey"];
+
+builder.Services.Configure<StripeSettings>(
+    builder.Configuration.GetSection("Stripe"));
+
 
 var app = builder.Build();
 
 // ────── BUILD THE INDEX RIGHT HERE ──────
 // Block on startup so that by the time Kestrel is up, the index is READY.
-//app.Services
-//   .GetRequiredService<ListingSearchService>()
-//   .BuildIndexAsync()
-//   .GetAwaiter()
-//   .GetResult();
+app.Services
+   .GetRequiredService<ListingSearchService>()
+   .BuildIndexAsync()
+   .GetAwaiter()
+   .GetResult();
 
-// ────── MIDDLEWARE PIPELINE ──────
-//app.UseHttpsRedirection();
+
 app.UseRouting();
 app.UseCors("AllowAll");
 app.UseAuthentication();

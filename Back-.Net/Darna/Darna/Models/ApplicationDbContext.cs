@@ -20,6 +20,9 @@ namespace Darna.Models
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
+            modelBuilder.Entity<User>()
+                .HasIndex(u => u.Email)
+                .IsUnique();
 
             // Example: Turn OFF cascading deletes from Reservation -> Client
             modelBuilder.Entity<Reservation>()
@@ -32,7 +35,7 @@ namespace Darna.Models
             modelBuilder.Entity<Reservation>()
                 .HasOne(r => r.Property)
                 .WithMany(h => h.Reservations)
-                .HasForeignKey(r => r.HouseId)
+                .HasForeignKey(r => r.PropertyId)
                 .OnDelete(DeleteBehavior.Restrict);
 
             // You can keep House -> Proprietaire as cascading if you want, or also make it Restrict
@@ -51,5 +54,6 @@ namespace Darna.Models
                 .Property(r => r.TotalPrice)
                 .HasColumnType("decimal(18,2)");
         }
+        
     }
 }

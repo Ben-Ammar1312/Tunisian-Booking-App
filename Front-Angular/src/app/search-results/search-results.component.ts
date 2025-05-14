@@ -10,7 +10,7 @@ import {ClientNavbarComponent} from '../shared/client-navbar/client-navbar.compo
 
 @Component({
   standalone: true,
-  imports: [CommonModule, CurrencyPipe, RouterLink, FooterComponent, ClientNavbarComponent],
+  imports: [CommonModule, CurrencyPipe, RouterLink, ClientNavbarComponent],
   templateUrl: './search-results.component.html'
 })
 export class SearchResultsComponent {

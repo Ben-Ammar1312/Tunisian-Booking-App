@@ -1,6 +1,8 @@
 package com.example.darna;
 import android.os.Bundle;
 import android.widget.EditText;
+import android.widget.ImageButton;
+
 import com.android.volley.Request;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -27,7 +29,10 @@ public class ChatActivity extends AppCompatActivity {
         rv.setLayoutManager(new LinearLayoutManager(this));
 
         et = findViewById(R.id.et_msg);
-        et.setOnEditorActionListener((t, id, ev) -> { send(); return true; });
+        ImageButton btnSend = findViewById(R.id.btn_send);
+        btnSend.setOnClickListener(v -> {
+            send();
+        });
     }
 
     private void send(){
