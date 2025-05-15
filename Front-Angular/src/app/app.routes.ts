@@ -11,6 +11,7 @@ import {ChatComponent} from './chat/chat.component';
 import {MesAnnoncesComponent} from './mes-annonces/mes-annonces.component';
 import {SearchResultsComponent} from './search-results/search-results.component';
 import { AuthGuard } from './guards/auth.guard';
+import {ProfilComponent} from './profil/profil.component';
 
 
 
@@ -18,6 +19,8 @@ export const routes: Routes = [
   { path: 'ajouter-annonce', component: AjouterAnnonceComponent,canActivate: [AuthGuard] },
   { path: 'property/:id', component: PropertyDetailsComponent,canActivate: [AuthGuard] },
   { path: 'mes-annonces', component: MesAnnoncesComponent, canActivate: [AuthGuard] },
+
+  {path: 'profil', component: ProfilComponent, canActivate: [AuthGuard] },
 
 
   { path: '', component: HomeComponent, canActivate: [AuthGuard] },
