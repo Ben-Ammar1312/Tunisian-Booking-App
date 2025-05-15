@@ -1,0 +1,38 @@
+<app-prop-navbar *ngIf="role === 'Proprietaire'"></app-prop-navbar>
+<app-client-navbar *ngIf="role === 'Client'"></app-client-navbar>
+
+<div class="container py-5">
+  <div class="card shadow-lg border-0">
+    <div class="card-header bg-primary bg-opacity-75 text-white">
+      <h3 class="mb-0">Mon Profil</h3>
+    </div>
+
+    <div class="card-body">
+      <form [formGroup]="profileForm" (ngSubmit)="updateProfile()">
+        <div class="mb-3">
+          <label class="form-label">Nom complet:</label>
+          <input type="text" formControlName="fullName" class="form-control" />
+        </div>
+
+        <div class="mb-3">
+          <label class="form-label">Email:</label>
+          <input type="email" formControlName="email" class="form-control" />
+        </div>
+
+        <div class="mb-3">
+          <label class="form-label">Nouveau mot de passe:</label>
+          <input type="password" formControlName="password" class="form-control" placeholder="Laissez vide pour ne pas changer" />
+        </div>
+
+        <div class="d-grid mt-4">
+          <button type="submit" [disabled]="profileForm.invalid" class="btn btn-success">
+            Mettre à jour
+          </button>
+        </div>
+      </form>
+
+      <p *ngIf="successMessage" class="text-success mt-3">{{ successMessage }}</p>
+      <p *ngIf="errorMessage" class="text-danger mt-3">{{ errorMessage }}</p>
+    </div>
+  </div>
+</div>
