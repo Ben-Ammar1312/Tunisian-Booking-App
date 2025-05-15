@@ -13,7 +13,7 @@ export class StripeService {
 
   /** create PaymentIntent + build <payment-element>  */
   async createPaymentElement(dto: {
-    propertyId: number; nights: number; amountTnd: number;
+    propertyId: number; nights: number; amountTnd: number;startIso: string, endIso:string
   }): Promise<StripePaymentElement> {
 
     const res = await firstValueFrom(

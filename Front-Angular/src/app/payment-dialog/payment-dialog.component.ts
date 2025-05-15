@@ -15,13 +15,13 @@ import {CommonModule} from '@angular/common';
   standalone : true,
   imports: [CommonModule, MatDialogContent, MatDialogActions],
   template: `
-    <h2 mat-dialog-title>Paiement – {{data.amountTnd}} TND</h2>
+    <h2 mat-dialog-title style="color: black;text-align: center">Paiement – {{data.amountTnd}} TND</h2>
     <mat-dialog-content class="pb-0">
       <div #host></div>
     </mat-dialog-content>
 
     <mat-dialog-actions align="end" class="mt-3">
-      <button mat-stroked-button (click)="dialog.close()">Annuler</button>
+      <button mat-stroked-button (click)="dialog.close(false)">Annuler</button>
       <button mat-raised-button color="primary"
               (click)="pay()" [disabled]="busy">
         {{ busy ? 'Paiement…' : 'Payer' }}
@@ -36,7 +36,7 @@ export class PaymentDialogComponent implements OnInit {
 
   constructor(
     @Inject(MAT_DIALOG_DATA) public data: {
-      propertyId: number; clientId: number; nights: number; amountTnd: number;
+      propertyId: number; clientId: number; nights: number; amountTnd: number; startIso: string; endIso: string;
     },
     private stripe: StripeService,
     public  dialog:  MatDialogRef<PaymentDialogComponent>
@@ -56,7 +56,7 @@ export class PaymentDialogComponent implements OnInit {
       alert(error.message);
     } else {
       /* confirm() redirects on success – dialog can simply close */
-      this.dialog.close();
+      this.dialog.close(true);
     }
   }
 }

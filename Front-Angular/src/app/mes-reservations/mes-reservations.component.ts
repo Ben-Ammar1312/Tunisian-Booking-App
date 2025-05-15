@@ -2,8 +2,6 @@ import { Component, OnInit } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Reservation } from '../models/reservation.model';
 import {CurrencyPipe, DatePipe, NgForOf, NgIf} from '@angular/common';
-import {ClientNavbarComponent} from '../shared/client-navbar/client-navbar.component';
-import {PropNavbarComponent} from '../shared/prop-navbar/prop-navbar.component';
 import {environment} from '../../environments/environments';
 
 @Component({
@@ -13,9 +11,7 @@ import {environment} from '../../environments/environments';
     NgIf,
     NgForOf,
     DatePipe,
-    CurrencyPipe,
-    ClientNavbarComponent,
-    PropNavbarComponent
+    CurrencyPipe
   ],
   styleUrls: ['./mes-reservations.component.css']
 })

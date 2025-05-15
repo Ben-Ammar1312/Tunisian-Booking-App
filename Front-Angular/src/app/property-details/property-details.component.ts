@@ -20,10 +20,6 @@ import { differenceInCalendarDays } from 'date-fns';
 
 import { environment }   from '../../environments/environments';
 import { StripeService } from '../Services/stripe.service';
-
-/* navbars */
-import { ClientNavbarComponent } from '../shared/client-navbar/client-navbar.component';
-import { PropNavbarComponent   } from '../shared/prop-navbar/prop-navbar.component';
 import {StripePaymentElement} from '@stripe/stripe-js';
 import {PaymentDialogComponent} from '../payment-dialog/payment-dialog.component';
 import {MatButtonModule} from '@angular/material/button';
@@ -36,7 +32,6 @@ import {MatButtonModule} from '@angular/material/button';
   imports    : [
     CommonModule, FormsModule,
     MatDatepickerModule, MatFormFieldModule, MatInputModule, MatNativeDateModule,MatDialogModule,MatButtonModule,
-    ClientNavbarComponent, PropNavbarComponent
   ]
 })
 export class PropertyDetailsComponent implements OnInit {
@@ -141,13 +136,24 @@ export class PropertyDetailsComponent implements OnInit {
       return;
     }
 
-    this.dialog.open(PaymentDialogComponent, {
+    const dialogRef = this.dialog.open(PaymentDialogComponent, {
       width : '480px',
       data  : {
-        propertyId : this.property.id,
-        clientId   : this.currentUser.id,
-        nights     : this.numberOfNights,
-        amountTnd  : this.totalPrice
+        propertyId: this.property.id,
+        clientId:   this.currentUser.id,
+        nights:     this.numberOfNights,
+        amountTnd:  this.totalPrice,
+        startIso:   this.start.toISOString(),
+        endIso:     this.end.toISOString(),
+      }
+    });
+
+    dialogRef.afterClosed().subscribe(success => {
+      if (success) {
+        // 1) congratulate…
+        alert('🎉 Votre réservation est confirmée ! Merci et à bientôt.');
+        // 2) reload so the calendar re-fetches busy dates
+        window.location.reload();
       }
     });
   }

@@ -56,7 +56,7 @@ builder.Services.AddHttpClient<ChatService>("llocal-lm", c =>
     c.BaseAddress = new Uri("http://127.0.0.1:1234/"));
 
 // ListingSearchService pulls llocal-lm via IHttpClientFactory
-//builder.Services.AddSingleton<ListingSearchService>();
+builder.Services.AddSingleton<ListingSearchService>();
 
 
 Stripe.StripeConfiguration.ApiKey =
@@ -76,11 +76,11 @@ var app = builder.Build();
 
 // ────── BUILD THE INDEX RIGHT HERE ──────
 // Block on startup so that by the time Kestrel is up, the index is READY.
-//app.Services
-//   .GetRequiredService<ListingSearchService>()
-//   .BuildIndexAsync()
-//   .GetAwaiter()
-//   .GetResult();
+app.Services
+   .GetRequiredService<ListingSearchService>()
+   .BuildIndexAsync()
+   .GetAwaiter()
+   .GetResult();
 
 
 app.UseRouting();

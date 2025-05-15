@@ -43,7 +43,9 @@ public class PaymentsController : ControllerBase
             {
                 ["propertyId"] = dto.PropertyId.ToString(),
                 ["nights"]     = dto.Nights    .ToString(),
-                ["clientId"]   = userId .ToString()
+                ["clientId"]   = userId .ToString(),
+                ["startDate" ] = dto.StartIso,
+                ["endDate"   ] = dto.EndIso
             },
             AutomaticPaymentMethods = new PaymentIntentAutomaticPaymentMethodsOptions
             {
@@ -91,6 +93,8 @@ public class PaymentsController : ControllerBase
             int propertyId = int.Parse(pi.Metadata["propertyId"]);
             int nights     = int.Parse(pi.Metadata["nights"]);
             int clientId   = int.Parse(pi.Metadata["clientId"]);
+            var startDate = DateTime.Parse(pi.Metadata["startDate"]);
+            var endDate   = DateTime.Parse(pi.Metadata["endDate"]);
 
             // create reservation
             await using var scope = _scopeFactory.CreateAsyncScope();
@@ -100,8 +104,8 @@ public class PaymentsController : ControllerBase
             {
                 PropertyId  = propertyId,
                 ClientId    = clientId,
-                StartDate   = DateTime.UtcNow.Date,
-                EndDate     = DateTime.UtcNow.Date.AddDays(nights),
+                StartDate   = startDate,
+                EndDate     = endDate,
                 TotalPrice  = (decimal)pi.Amount / 100m
             });
             await db.SaveChangesAsync();
@@ -118,4 +122,6 @@ public record CreatePayDto(
     int     PropertyId,
     int     ClientId,
     int     Nights,
-    decimal AmountTnd);
+    decimal AmountTnd,
+    string  StartIso,
+    string  EndIso);
