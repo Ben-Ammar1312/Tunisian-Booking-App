@@ -4,7 +4,6 @@ import { CommonModule } from '@angular/common';
 import { HttpClientModule } from '@angular/common/http';
 import { AuthService } from '../Services/auth.service';
 import {FooterComponent} from '../shared/footer/footer.component';
-import {StandardNavbarComponent} from '../shared/standard-navbar/standard-navbar.component';
 
 @Component({
   selector: 'app-signup',
