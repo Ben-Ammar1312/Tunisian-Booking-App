@@ -12,6 +12,7 @@ import {MesAnnoncesComponent} from './mes-annonces/mes-annonces.component';
 import {SearchResultsComponent} from './search-results/search-results.component';
 import { AuthGuard } from './guards/auth.guard';
 import {ProfilComponent} from './profil/profil.component';
+import {MesReservationsComponent} from './mes-reservations/mes-reservations.component';
 
 
 
@@ -21,6 +22,7 @@ export const routes: Routes = [
   { path: 'mes-annonces', component: MesAnnoncesComponent, canActivate: [AuthGuard] },
 
   {path: 'profil', component: ProfilComponent, canActivate: [AuthGuard] },
+  {path: 'mes-reservations', component: MesReservationsComponent, canActivate: [AuthGuard] },
 
 
   { path: '', component: HomeComponent, canActivate: [AuthGuard] },
