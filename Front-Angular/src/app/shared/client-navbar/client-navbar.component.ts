@@ -38,6 +38,8 @@ export class ClientNavbarComponent implements AfterViewInit {
     sessionStorage.clear();
     this.auth.setIsLoggedIn(false);
     this.auth.setUserRole(null);
+    this.auth.setIsLoggedIn(false);
+    this.auth.setUserRole(null);
     this.router.navigate(['/']).then(() => location.reload());
   }
 

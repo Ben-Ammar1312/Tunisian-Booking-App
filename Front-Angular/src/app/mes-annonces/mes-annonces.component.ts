@@ -1,65 +1,79 @@
-import { Component, OnInit } from '@angular/core';
-import { PropertyService } from '../Services/property.service';  // Import the service
-import { Property } from '../models/property.model';
-import {CurrencyPipe, NgForOf, NgIf} from '@angular/common';
-import {PropNavbarComponent} from '../shared/prop-navbar/prop-navbar.component';
-import {RouterLink} from '@angular/router';
-import {environment} from '../../environments/environments';
-import {HttpClient} from '@angular/common/http';  // Import the model
+// src/app/mes-annonces/mes-annonces.component.ts
+import { Component, OnInit }   from '@angular/core';
+import { CommonModule }         from '@angular/common';
+import { NgIf, NgForOf }        from '@angular/common';
+import { CurrencyPipe }         from '@angular/common';
+import { RouterLink }           from '@angular/router';
+import { PropNavbarComponent }  from '../shared/prop-navbar/prop-navbar.component';
+import { PropertyService }      from '../Services/property.service';
+import { HttpClient }           from '@angular/common/http';
+import { environment }          from '../../environments/environments';
+import { Property }             from '../models/property.model';
 
 @Component({
   selector: 'app-mes-annonces',
-  templateUrl: './mes-annonces.component.html',
+  standalone: true,                        // ← add this
   imports: [
-    CurrencyPipe,
-    NgForOf,
+    CommonModule,
     NgIf,
-    PropNavbarComponent,
-    RouterLink
+    NgForOf,
+    CurrencyPipe,
+    RouterLink,
+    PropNavbarComponent
   ],
+  templateUrl: './mes-annonces.component.html',
   styleUrls: ['./mes-annonces.component.css']
 })
 export class MesAnnoncesComponent implements OnInit {
   role: string | null = null;
-
+  userId!: number;            // set below
   properties: Property[] = [];
-  userId: number = 2;  // Use the actual logged-in user's ID, for testing use a hardcoded ID.
 
-  constructor(private propertyService: PropertyService,
-              private http: HttpClient) { }
+  constructor(
+    private propertyService: PropertyService,
+    private http: HttpClient
+  ) {}
 
   ngOnInit(): void {
-    this.role = localStorage.getItem('role');
+    // get role & userId from localStorage:
+    this.role   = localStorage.getItem('role');
+    const idStr = localStorage.getItem('id');
+    this.userId = idStr ? +idStr : 0;
 
     this.fetchProperties();
   }
 
-  // Method to fetch properties for the user
   fetchProperties(): void {
-    this.propertyService.getPropertiesForUser(this.userId).subscribe(
-      (data) => {
-        this.properties = data;
-        console.log('Fetched properties:', this.properties);
-      },
-      (error) => {
-        console.error('Error fetching properties: ', error);
-      }
-    );
+    if (!this.userId) {
+      console.warn('No userId, skipping fetch');
+      return;
+    }
+
+    const url = `${environment.apiUrl}/property/mes-annonces/${this.userId}`;
+    console.log('🔍 fetching MesAnnonces from', url);
+    this.propertyService.getPropertiesForUser(this.userId)
+      .subscribe({
+        next: props => {
+          console.log('⚙️ got back', props.length, 'properties', props);
+          this.properties = props;
+        },
+        error: err => {
+          console.error('❌ Error fetching properties', err);
+        }
+      });
   }
 
   deleteProperty(propertyId: number) {
-    if (confirm('Êtes-vous sûr de vouloir supprimer cette annonce ?')) {
-      this.http.delete(`${environment.apiUrl}/property/${propertyId}`)
-        .subscribe({
-          next: () => {
-            this.properties = this.properties.filter(p => p.id !== propertyId);
-            console.log('Property deleted successfully.');
-          },
-          error: (error) => {
-            console.error('Error deleting property:', error);
-          }
-        });
-    }
-  }
+    if (!confirm('Êtes-vous sûr ?')) return;
 
+    this.http
+      .delete(`${environment.apiUrl}/property/${propertyId}`)
+      .subscribe({
+        next: () => {
+          this.properties = this.properties.filter(p => p.id !== propertyId);
+          console.log('Annonce supprimée');
+        },
+        error: err => console.error('Erreur suppression', err)
+      });
+  }
 }

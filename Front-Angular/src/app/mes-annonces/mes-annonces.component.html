@@ -1,58 +1,48 @@
-<app-prop-navbar *ngIf="role === 'Proprietaire'"></app-prop-navbar>
+<div *ngIf="properties.length > 0; else noProperties">
+  <div class="row g-4">
+    <!-- loop directly on the column DIV -->
+    <div class="col-12 col-sm-6 col-md-4 col-lg-3"
+         *ngFor="let property of properties">
 
-<div class="page-content w-100">
-  <div class="container py-5">
-    <h2 class="fw-bold mb-4 text-center">Mes Annonces</h2>
+      <div class="card h-100 shadow-sm border-0">
 
-    <div *ngIf="properties.length > 0; else noProperties">
-      <div class="row g-4">
-        <ng-container *ngFor="let property of properties">
-          <div class="col-12 col-sm-6 col-md-4 col-lg-3">
-            <div class="card h-100 shadow-sm border-0">
+        <!-- image -->
+        <img
+          [src]="property.firstImage || 'assets/default-image.jpg'"
+          class="card-img-top object-fit-cover"
+          style="height: 180px;"
+          alt="{{ property.name }}" />
 
-              <!-- image -->
-              <img
-                [src]="property.firstImage || 'assets/default-image.jpg'"
-                class="card-img-top object-fit-cover"
-                style="height: 180px;"
-                alt="{{ property.name }}" />
+        <!-- body -->
+        <div class="card-body d-flex flex-column">
+          <h6 class="card-title fw-semibold mb-1">{{ property.name }}</h6>
+          <p class="small text-muted mb-1">
+            <i class="bi bi-geo-alt me-1"></i> {{ property.location }}
+          </p>
+          <p class="fw-bold text-primary mb-2">
+            {{ property.pricePerNight | currency:'TND':'symbol':'1.0-0' }}
+          </p>
 
-              <!-- body -->
-              <div class="card-body d-flex flex-column">
-                <h6 class="card-title fw-semibold mb-1">{{ property.name }}</h6>
-                <p class="small text-muted mb-1">
-                  <i class="bi bi-geo-alt me-1"></i> {{ property.location }}
-                </p>
-                <p class="fw-bold text-primary mb-2">
-                  {{ property.pricePerNight | currency:'TND':'symbol':'1.0-0' }}
-                </p>
+          <div class="d-flex gap-2 mt-auto">
+            <a [routerLink]="['/property', property.id]"
+               class="btn btn-outline-primary btn-sm w-50">
+              Détails
+            </a>
 
-                <div class="d-flex gap-2 mt-auto">
-                  <a [routerLink]="['/property', property.id]"
-                     class="btn btn-outline-primary btn-sm w-50">
-                    Détails
-                  </a>
-
-                  <button (click)="deleteProperty(property.id)"
-                          class="btn btn-outline-danger btn-sm w-50">
-                    Supprimer
-                  </button>
-                </div>
-
-              </div>
-
-            </div>
+            <button (click)="deleteProperty(property.id)"
+                    class="btn btn-outline-danger btn-sm w-50">
+              Supprimer
+            </button>
           </div>
-        </ng-container>
+        </div>
+
       </div>
     </div>
-
-    <!-- if no properties -->
-    <ng-template #noProperties>
-      <div class="text-center mt-5">
-        <p class="text-muted fs-5">Aucune annonce trouvée pour cet utilisateur.</p>
-      </div>
-    </ng-template>
-
   </div>
 </div>
+
+<ng-template #noProperties>
+  <div class="text-center mt-5">
+    <p class="text-muted fs-5">Aucune annonce trouvée pour cet utilisateur.</p>
+  </div>
+</ng-template>

@@ -47,6 +47,9 @@ export class LoginComponent implements OnInit {
           localStorage.setItem('fullName', response.fullName);
           localStorage.setItem('id', response.id);
 
+          this.authService.setIsLoggedIn(true);
+          this.authService.setUserRole(response.role);
+
           // ✅ Ajout de logs pour voir ce qu'il se passe
           console.log('Rôle reçu :', response.role);
 

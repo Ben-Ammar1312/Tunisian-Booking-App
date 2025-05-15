@@ -10,11 +10,13 @@ import { MatDatepickerModule }  from '@angular/material/datepicker';
 import { MatInputModule }       from '@angular/material/input';
 import { MatNativeDateModule }  from '@angular/material/core';
 import { MatFormFieldModule }   from '@angular/material/form-field';
+import {ClientNavbarComponent} from './shared/client-navbar/client-navbar.component';
+import {PropNavbarComponent} from './shared/prop-navbar/prop-navbar.component';
 
 @Component({
   selector:    'app-root',
   standalone:  true,
-  imports:     [
+  imports: [
     RouterOutlet,
     CommonModule,          // gives *ngIf, *ngFor, etc.
     FooterComponent,
@@ -22,13 +24,16 @@ import { MatFormFieldModule }   from '@angular/material/form-field';
     MatDatepickerModule,
     MatInputModule,
     MatNativeDateModule,
-    MatFormFieldModule
+    MatFormFieldModule,
+    ClientNavbarComponent,
+    PropNavbarComponent
   ],
   templateUrl: './app.component.html'
 })
 export class AppComponent implements OnInit {
   // keep this boolean if you like, or skip it and just pipe directly
   isLoggedIn = false;
+  role: string | null = null;
 
   // ← make auth public if you want to reference auth.isLoggedIn$ in the template
   constructor(public auth: AuthService) {}
@@ -39,5 +44,6 @@ export class AppComponent implements OnInit {
 
     // subscribe to live changes
     this.auth.isLoggedIn$.subscribe(flag => this.isLoggedIn = flag);
+    this.auth.role$.subscribe(role => this.role = role);
   }
 }
