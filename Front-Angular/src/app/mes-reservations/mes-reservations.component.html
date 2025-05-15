@@ -1,0 +1,39 @@
+<app-prop-navbar *ngIf="role === 'Proprietaire'"></app-prop-navbar>
+<app-client-navbar *ngIf="role === 'Client'"></app-client-navbar>
+
+<div class="container py-4">
+  <h2 class="mb-4">Mes Réservations</h2>
+
+  <div *ngFor="let res of reservations" class="card mb-3 shadow-sm">
+    <div class="row g-0 align-items-center">
+      <div class="col-md-4">
+        <img *ngIf="res.property.images?.length"
+             [src]="res.property.images[0].url"
+             class="img-fluid rounded-start"
+             alt="Image de la propriété" />
+      </div>
+      <div class="col-md-8">
+        <div class="card-body">
+          <h5 class="card-title">{{ res.property.name }}</h5>
+          <p class="card-text">
+            <strong>Lieu:</strong> {{ res.property.location }}<br>
+            <strong>Type:</strong> {{ res.property.type }}<br>
+            <strong>Du:</strong> {{ res.startDate | date:'shortDate' }}<br>
+            <strong>Au:</strong> {{ res.endDate | date:'shortDate' }}<br>
+            <strong>Total:</strong> {{ res.totalPrice | currency:' TND ' }}
+          </p>
+          <button class="btn btn-sm btn-outline-primary"
+                  (click)="toggleDetails(res.id)">
+            {{ expandedReservationId === res.id ? 'Masquer' : 'Voir' }} les détails
+          </button>
+
+          <div *ngIf="expandedReservationId === res.id" class="mt-3">
+            <p><strong>Description:</strong> {{ res.property.description }}</p>
+            <p><strong>Prix par nuit:</strong> {{ res.property.pricePerNight | currency:' TND ' }}</p>
+            <!-- More details if needed -->
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
