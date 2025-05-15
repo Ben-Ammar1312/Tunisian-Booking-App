@@ -1,6 +1,10 @@
+<app-prop-navbar *ngIf="role === 'Proprietaire'"></app-prop-navbar>
+<app-client-navbar *ngIf="role === 'Client'"></app-client-navbar>
+
 <div class="page-content">
   <router-outlet></router-outlet>
 </div>
+
 
 <!-- only show the widget if our component boolean is true -->
 <app-chat-widget *ngIf="isLoggedIn"></app-chat-widget>

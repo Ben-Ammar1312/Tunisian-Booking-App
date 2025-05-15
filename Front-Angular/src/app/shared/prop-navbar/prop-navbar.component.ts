@@ -36,7 +36,8 @@ export class PropNavbarComponent  {
   logout(): void {
     localStorage.clear();
     sessionStorage.clear();
-
+    this.authService.setIsLoggedIn(false);
+    this.authService.setUserRole(null);
     // Optional: Clear cookies
     document.cookie.split(";").forEach((c) => {
       document.cookie = c

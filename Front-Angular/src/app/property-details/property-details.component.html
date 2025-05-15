@@ -1,6 +1,5 @@
 <!-- navbars -->
-<app-prop-navbar   *ngIf="role === 'Proprietaire'"></app-prop-navbar>
-<app-client-navbar *ngIf="role === 'Client'"></app-client-navbar>
+
 
 <div *ngIf="property" class="container py-5">
 
@@ -8,8 +7,29 @@
   <div class="card shadow-lg border-0">
     <div class="row g-0">
 
-      <!-- images … (unchanged) … -->
-
+      <!-- images … (unchanged) … --><div *ngIf="property?.images?.length" class="col-lg-6">
+      <div id="propertyCarousel" class="carousel slide h-100" data-bs-ride="carousel">
+        <div class="carousel-inner h-100">
+          <div
+            *ngFor="let imgUrl of property.images; let i = index"
+            class="carousel-item h-100"
+            [class.active]="i === 0">
+            <img
+              [src]="imgUrl"
+              class="d-block w-100 h-100 object-fit-cover"
+              alt="Photo {{ i + 1 }}">
+          </div>
+        </div>
+        <button class="carousel-control-prev" type="button"
+                data-bs-target="#propertyCarousel" data-bs-slide="prev">
+          <span class="carousel-control-prev-icon"></span>
+        </button>
+        <button class="carousel-control-next" type="button"
+                data-bs-target="#propertyCarousel" data-bs-slide="next">
+          <span class="carousel-control-next-icon"></span>
+        </button>
+      </div>
+    </div>
       <!-- details + picker -->
       <div class="col-lg-6">
         <div class="card-body p-5 d-flex flex-column h-100">
