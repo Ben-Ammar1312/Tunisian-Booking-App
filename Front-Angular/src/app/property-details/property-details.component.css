@@ -1,1 +1,5 @@
 
+.mat-calendar-body-cell-disabled > .mat-calendar-body-cell-content {
+  color: #dc3545 !important;          /* bootstrap danger */
+  text-decoration: line-through;
+}

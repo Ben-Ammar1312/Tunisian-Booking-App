@@ -6,6 +6,7 @@ import {Property} from '../../models/property.model';
 import {DarnaAiService} from '../../Services/darna-ai.service';
 
 @Component({
+  standalone: true,
   selector: 'app-prop-navbar',
   imports: [
     RouterLink, RouterLinkActive, FormsModule
@@ -56,15 +57,18 @@ export class PropNavbarComponent  {
     const q = this.searchQuery.trim();
     if (!q) return;
 
-    this.ai.search(q, 5).subscribe({
-      next: props => {
-        this.searchResults = props;
-        console.log('search results:', props);
-        // e.g. navigate to a search‑results page:
-        // this.router.navigate(['/search'], { queryParams: { q } });
-      },
-      error: err => console.error('Search error', err)
-    });
+    this.ai.search(q /*, éventuellement nombre de résultats */)
+      .subscribe({
+        next: hits => {
+          // navigation vers /search avec queryParams et state
+          this.router.navigate(['/search'], {
+            queryParams: { q },
+            state:      { results: hits }
+          });
+          this.searchQuery = '';      // vider le champ si besoin
+        },
+        error: err => console.error('Search error', err)
+      });
   }
 
 }

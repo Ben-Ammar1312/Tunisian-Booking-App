@@ -10,20 +10,23 @@ import {PropertyDetailsComponent} from './property-details/property-details.comp
 import {ChatComponent} from './chat/chat.component';
 import {MesAnnoncesComponent} from './mes-annonces/mes-annonces.component';
 import {SearchResultsComponent} from './search-results/search-results.component';
+import { AuthGuard } from './guards/auth.guard';
+
+
 
 export const routes: Routes = [
-  { path: 'ajouter-annonce', component: AjouterAnnonceComponent },
-  { path: 'property/:id', component: PropertyDetailsComponent },
-  { path: 'mes-annonces', component: MesAnnoncesComponent },
+  { path: 'ajouter-annonce', component: AjouterAnnonceComponent,canActivate: [AuthGuard] },
+  { path: 'property/:id', component: PropertyDetailsComponent,canActivate: [AuthGuard] },
+  { path: 'mes-annonces', component: MesAnnoncesComponent, canActivate: [AuthGuard] },
 
 
-  { path: '', component: HomeComponent },
+  { path: '', component: HomeComponent, canActivate: [AuthGuard] },
   { path: 'login', component: LoginComponent },
   { path: 'signup', component: SignupComponent },
-  { path: 'dashboard-client', component: DashboardClientComponent },
-  { path: 'dashboard-proprietaire', component: DashboardProprietaireComponent },
-  { path: 'chat', component: ChatComponent },
-  { path: 'search',component: SearchResultsComponent}
+  { path: 'dashboard-client', component: DashboardClientComponent,canActivate: [AuthGuard] },
+  { path: 'dashboard-proprietaire', component: DashboardProprietaireComponent , canActivate: [AuthGuard] },
+  { path: 'chat', component: ChatComponent, canActivate: [AuthGuard] },
+  { path: 'search',component: SearchResultsComponent,canActivate: [AuthGuard] },
 ];
 
 @NgModule({

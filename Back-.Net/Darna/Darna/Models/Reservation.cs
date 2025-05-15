@@ -1,5 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations.Schema;
 using System.ComponentModel.DataAnnotations;
+using System.Runtime.CompilerServices;
 
 namespace Darna.Models
 {
@@ -23,7 +24,7 @@ namespace Darna.Models
         [ForeignKey("ClientId")]
         public Client? Client { get; set; }
 
-        [Required]
+        [Required,Column("HouseId")]
         public int PropertyId { get; set; }
 
         [ForeignKey("PropertyId")]

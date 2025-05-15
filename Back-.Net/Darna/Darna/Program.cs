@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Darna.DTOs;
+using Microsoft.AspNetCore.Authorization;
 var builder = WebApplication.CreateBuilder(args);
 
 // 1) CORS — allow everything (DEV only)
@@ -64,7 +65,13 @@ Stripe.StripeConfiguration.ApiKey =
 builder.Services.Configure<StripeSettings>(
     builder.Configuration.GetSection("Stripe"));
 
-
+builder.Services.AddAuthorization(opts =>
+{
+    // anything *without* [AllowAnonymous] now requires a valid user
+    opts.FallbackPolicy = new AuthorizationPolicyBuilder()
+        .RequireAuthenticatedUser()
+        .Build();
+});
 var app = builder.Build();
 
 // ────── BUILD THE INDEX RIGHT HERE ──────

@@ -1,83 +1,121 @@
-namespace Darna.Controllers;
+// src/Controllers/PaymentsController.cs
+using System.Text;                      // Encoding
 using Microsoft.AspNetCore.Mvc;
-using Stripe;
+using Microsoft.EntityFrameworkCore;
+using Stripe;                           // Event, EventUtility, Events, …
 using Darna.Models;
+using Microsoft.AspNetCore.Authorization;
+using System.Security.Claims;
+namespace Darna.Controllers;
+
 [ApiController]
-[Route("api/payments")]
+[Authorize]
+[Route("api/[controller]")]
 public class PaymentsController : ControllerBase
 {
-    private readonly IConfiguration _cfg;
+    private readonly IConfiguration      _cfg;
     private readonly IServiceScopeFactory _scopeFactory;
+    private readonly ILogger<PaymentsController> _log;
 
-    public PaymentsController(IConfiguration cfg, IServiceScopeFactory sf) => (_cfg,_scopeFactory) = (cfg, sf);
+    public PaymentsController(
+        IConfiguration         cfg,
+        IServiceScopeFactory   scopeFactory,
+        ILogger<PaymentsController> log)
+    {
+        _cfg          = cfg;
+        _scopeFactory = scopeFactory;
+        _log          = log;
+    }
 
+    // ───────────────────────────────────────────────────────────── create intent
     // POST /api/payments/create-intent
     [HttpPost("create-intent")]
     public ActionResult CreateIntent([FromBody] CreatePayDto dto)
     {
+        var userId = int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)!);
         var service = new PaymentIntentService();
+
         var intent = service.Create(new PaymentIntentCreateOptions
         {
-            Amount   = (long)(dto.AmountTnd ),   
-            Currency = "USD",
-            Metadata = new Dictionary<string,string>
+            Amount   = (long)(dto.AmountTnd * 100),   // to “cents”
+            Currency = "usd",
+            Metadata = new()
             {
-                ["propertyId"]   = dto.PropertyId.ToString(),
-                ["nights"]       = dto.Nights.ToString(),
-                ["clientId"]     = dto.ClientId.ToString()
+                ["propertyId"] = dto.PropertyId.ToString(),
+                ["nights"]     = dto.Nights    .ToString(),
+                ["clientId"]   = userId .ToString()
             },
             AutomaticPaymentMethods = new PaymentIntentAutomaticPaymentMethodsOptions
             {
-                Enabled = true            // lets Stripe pick card, Apple Pay, …
+                Enabled = true
             }
         });
 
         return Ok(new
         {
             clientSecret   = intent.ClientSecret,
-            publishableKey = _cfg.GetSection("Stripe")["PublishableKey"]
+            publishableKey = _cfg["Stripe:PublishableKey"]
         });
     }
+
+    // ───────────────────────────────────────────────────────────── webhook
+    // POST /api/payments/webhook   (Stripe CLI or live dashboard will hit this)
+    [AllowAnonymous]
     [HttpPost("webhook")]
     public async Task<IActionResult> Webhook()
     {
-        var json   = await new StreamReader(HttpContext.Request.Body).ReadToEndAsync();
-        var secret = _cfg["Stripe:WebhookSecret"];
-        Event evt;
+        string payload    = await new StreamReader(Request.Body, Encoding.UTF8).ReadToEndAsync();
+        string sigHeader  = Request.Headers["Stripe-Signature"];
+        string secret     = _cfg["Stripe:WebhookSecret"];
 
-        try {
-            evt = EventUtility.ConstructEvent(json,
-                Request.Headers["Stripe-Signature"],
-                secret);
-        } catch (Exception e) {
-            return BadRequest($"❌  Webhook error: {e.Message}");
+        _log.LogInformation("▶ using webhook secret = {Secret}", secret);
+
+        Event stripeEvent;
+        try
+        {
+            // NB: string overload – payload is a JSON *string*
+            stripeEvent = EventUtility.ConstructEvent(payload, sigHeader, secret, throwOnApiVersionMismatch: false);
+        }
+        catch (StripeException ex)
+        {
+            _log.LogWarning("⚠️  Invalid signature → {Msg}", ex.Message);
+            return BadRequest();
         }
 
-        if (evt.Type == Events.PaymentIntentSucceeded)
-        {
-            var intent = evt.Data.Object as PaymentIntent;
-            // 1️⃣  Extract metadata
-            int propId   = int.Parse(intent.Metadata["propertyId"]);
-            int nights   = int.Parse(intent.Metadata["nights"]);
-            int clientId = int.Parse(intent.Metadata["clientId"]);
+        _log.LogInformation("▶️  Stripe event {Type}", stripeEvent.Type);
 
-            // 2️⃣  Create Reservation in DB
-            using var scope = _scopeFactory.CreateScope();
+        if (stripeEvent.Type == "payment_intent.succeeded")
+        {
+            var pi = (PaymentIntent)stripeEvent.Data.Object;
+
+            int propertyId = int.Parse(pi.Metadata["propertyId"]);
+            int nights     = int.Parse(pi.Metadata["nights"]);
+            int clientId   = int.Parse(pi.Metadata["clientId"]);
+
+            // create reservation
+            await using var scope = _scopeFactory.CreateAsyncScope();
             var db = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
 
-            var reservation = new Reservation {
-                PropertyId  = propId,
-                ClientId   = clientId,
-                StartDate  = DateTime.UtcNow.Date,
-                EndDate    = DateTime.UtcNow.Date.AddDays(nights),
-                TotalPrice = (decimal)intent.Amount / 100m
-            };
-            db.Reservations.Add(reservation);
+            db.Reservations.Add(new Reservation
+            {
+                PropertyId  = propertyId,
+                ClientId    = clientId,
+                StartDate   = DateTime.UtcNow.Date,
+                EndDate     = DateTime.UtcNow.Date.AddDays(nights),
+                TotalPrice  = (decimal)pi.Amount / 100m
+            });
             await db.SaveChangesAsync();
+
+            _log.LogInformation("✅ Reservation stored → property {Prop} / client {Cli}", propertyId, clientId);
         }
-        return Ok();
+
+        return Ok();   // 200 so Stripe stops retrying
     }
 }
 
-public record CreatePayDto(int PropertyId, int ClientId,
-    int Nights, decimal AmountTnd);
+// ───────────────────────────────────────────────────────────── DTO
+public record CreatePayDto(
+    int     PropertyId,
+    int     ClientId,
+    int     Nights,
+    decimal AmountTnd);
