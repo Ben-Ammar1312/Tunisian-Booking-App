@@ -1,169 +1,76 @@
-<app-prop-navbar *ngIf="role === 'Proprietaire'"></app-prop-navbar>
+<!-- navbars -->
+<app-prop-navbar   *ngIf="role === 'Proprietaire'"></app-prop-navbar>
 <app-client-navbar *ngIf="role === 'Client'"></app-client-navbar>
-
 
 <div *ngIf="property" class="container py-5">
 
-  <!-- === MAIN CARD ==================================================== -->
+  <!-- card (images + info) -->
   <div class="card shadow-lg border-0">
     <div class="row g-0">
 
-      <!-- ❶ Image carousel -->
-      <div class="col-lg-6">
-        <div id="propertyCarousel" class="carousel slide h-100" data-bs-ride="carousel">
-          <div class="carousel-inner h-100">
-            <div *ngFor="let img of property.images; let i = index"
-                 class="carousel-item h-100"
-                 [class.active]="i === 0">
-              <img [src]="img"
-                   class="d-block w-100 h-100 object-fit-contain"
-                   alt="{{ property.name }}">
-            </div>
-          </div>
+      <!-- images … (unchanged) … -->
 
-          <button class="carousel-control-prev" type="button" data-bs-target="#propertyCarousel" data-bs-slide="prev">
-            <span class="carousel-control-prev-icon"></span>
-          </button>
-          <button class="carousel-control-next" type="button" data-bs-target="#propertyCarousel" data-bs-slide="next">
-            <span class="carousel-control-next-icon"></span>
-          </button>
-        </div>
-      </div>
-
-      <!-- ❷ Details -->
+      <!-- details + picker -->
       <div class="col-lg-6">
         <div class="card-body p-5 d-flex flex-column h-100">
 
-          <div>
-            <h2 class="fw-bold">{{ property.name }}</h2>
-            <p class="text-muted mb-1">
-              <i class="bi bi-geo-alt-fill me-1"></i>{{ property.location }}
-            </p>
-            <p class="text-muted mb-3">
-              <strong>Type :</strong> {{ property.type }}
-            </p>
-            <h4 class="text-primary fw-semibold">{{ property.pricePerNight }} TND / nuit</h4>
-          </div>
+          <h2 class="fw-bold">{{ property.name }}</h2>
+          <p class="text-muted mb-1">
+            <i class="bi bi-geo-alt-fill me-1"></i>{{ property.location }}
+          </p>
+          <p class="text-muted mb-3"><strong>Type :</strong> {{ property.type }}</p>
 
-          <!-- nights selector -->
-          <div class="mt-4">
-            <label class="form-label">Nombre de nuits</label>
-            <input type="number"
-                   class="form-control"
-                   min="1"
-                   [(ngModel)]="numberOfNights"
-                   (ngModelChange)="updateTotal()">
-            <p class="mt-2"><strong>Total :</strong> {{ totalPrice }} TND</p>
-          </div>
+          <h4 class="text-primary fw-semibold">
+            {{ property.pricePerNight }} TND / nuit
+          </h4>
 
-          <button class="btn btn-primary btn-lg mt-auto w-100">
+          <!-- date-range input -->
+          <mat-form-field appearance="outline" class="w-100 mt-4">
+            <mat-label>Séjour</mat-label>
+
+            <mat-date-range-input #range="matDateRangeInput"
+                                  [rangePicker]="picker"
+                                  [min]="minDate"
+                                  [dateFilter]="dateFilter">
+
+              <input matStartDate placeholder="Arrivée" (dateChange)="onRangeChange()">
+              <input matEndDate   placeholder="Départ" (dateChange)="onRangeChange()">
+
+            </mat-date-range-input>
+
+            <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+            <mat-date-range-picker #picker></mat-date-range-picker>
+          </mat-form-field>
+
+          <p class="mt-2"><strong>Total :</strong> {{ totalPrice }} TND</p>
+
+          <button class="btn btn-primary btn-lg mt-auto w-100"
+                  (click)="reserve()">
             Réserver maintenant
           </button>
         </div>
       </div>
-    </div>
-  </div>
+      <!-- total & button already present -->
 
-  <!-- === AMENITIES CARD ================================================ -->
-  <div *ngIf="property" class="card shadow-lg border-0 p-4 mt-5">
-    <h4>Commodités</h4>
-    <div class="row mt-3">
+      <!-- ═══════════  AMENITIES  ═══════════ -->
+      <div class="card shadow-lg border-0 p-4 mt-5">
+        <h4>Commodités</h4>
 
-      <!-- Air Conditioning -->
-      <div *ngIf="property.airConditioning" class="col-md-4 mb-2">
-        <i class="bi bi-snow"></i> Climatisation
+        <div class="row mt-3 fs-5">
+          <ng-container *ngFor="let amen of amenities">
+            <div *ngIf="property[amen.key]" class="col-md-4 mb-2">
+              <i [class]="'bi ' + amen.icon"></i> {{ amen.label }}
+            </div>
+          </ng-container>
+        </div>
       </div>
 
-      <!-- Wifi -->
-      <div *ngIf="property.wifi" class="col-md-4 mb-2">
-        <i class="bi bi-wifi"></i> Wifi
+      <!-- ═══════════  DESCRIPTION  ═══════════ -->
+      <div class="card shadow-lg border-0 p-4 mt-5">
+        <h4>Description</h4>
+        <p class="lead mb-0" style="white-space: pre-line;">
+          {{ property.description }}
+        </p>
       </div>
 
-      <!-- Pool -->
-      <div *ngIf="property.pool" class="col-md-4 mb-2">
-        <i class="bi bi-water"></i> Piscine
-      </div>
-
-      <!-- Heater -->
-      <div *ngIf="property.heating" class="col-md-4 mb-2">
-        <i class="bi bi-droplet-half"></i> Chauffage
-      </div>
-
-      <!-- Hot Tub -->
-      <div *ngIf="property.hotTub" class="col-md-4 mb-2">
-        <i class="bi bi-droplet-half"></i> Bain à remous
-      </div>
-
-      <!-- Gym -->
-      <div *ngIf="property.gym" class="col-md-4 mb-2">
-        <i class="bi bi-dumbbell"></i> Salle de sport
-      </div>
-
-      <!-- Free Parking -->
-      <div *ngIf="property.freeParkingOnPremises" class="col-md-4 mb-2">
-        <i class="bi bi-car-front"></i> Parking gratuit
-      </div>
-
-      <!-- Kitchen -->
-      <div *ngIf="property.kitchen" class="col-md-4 mb-2">
-        <i class="bi bi-house-door"></i> Cuisine
-      </div>
-
-      <!-- Coffee Maker -->
-      <div *ngIf="property.coffeeMaker" class="col-md-4 mb-2">
-        <i class="bi bi-cup-hot"></i> Machine à café
-      </div>
-
-      <!-- Dryer -->
-      <div *ngIf="property.dryer" class="col-md-4 mb-2">
-        <i class="bi bi-fan"></i> Sèche-linge
-      </div>
-
-      <!-- Washer -->
-      <div *ngIf="property.washer" class="col-md-4 mb-2">
-        <i class="bi bi-droplet"></i> Machine à laver
-      </div>
-
-      <!-- Hair Dryer -->
-      <div *ngIf="property.hairDryer" class="col-md-4 mb-2">
-        <i class="bi bi-wind"></i> Sèche-cheveux
-      </div>
-
-      <!-- Pets Allowed -->
-      <div *ngIf="property.petsAllowed" class="col-md-4 mb-2">
-        <i class="bi bi-paw"></i> Animaux acceptés
-      </div>
-
-      <!-- BBQ Grill -->
-      <div *ngIf="property.bbqGrill" class="col-md-4 mb-2">
-        <i class="bi bi-fire"></i> Barbecue
-      </div>
-
-      <!-- Smoke Alarm -->
-      <div *ngIf="property.smokeAlarm" class="col-md-4 mb-2">
-        <i class="bi bi-exclamation-triangle"></i> Détecteur de fumée
-      </div>
-
-      <!-- Carbon Monoxide Alarm -->
-      <div *ngIf="property.carbonMonoxideAlarm" class="col-md-4 mb-2">
-        <i class="bi bi-exclamation-triangle-fill"></i> Détecteur de monoxyde de carbone
-      </div>
-
-      <!-- First Aid Kit -->
-      <div *ngIf="property.firstAidKit" class="col-md-4 mb-2">
-        <i class="bi bi-briefcase"></i> Trousse de premiers secours
-      </div>
-
-    </div>
-  </div>
-
-
-  <!-- === DESCRIPTION CARD ============================================ -->
-  <div class="card shadow-lg border-0 p-4 mt-5">
-    <h4>Description</h4>
-    <p class="lead mb-0" style="white-space: pre-line;">{{ property.description }}</p>
-  </div>
-
-</div>
-
-
+    </div></div></div>

@@ -157,6 +157,25 @@ public class PropertyController : ControllerBase
         return Ok(propertyDto);
     }
 
+// GET /api/property/{id}/busy
+    [HttpGet("{id}/busy")]
+    public async Task<IActionResult> GetBusyDates(int id)
+    {
+        // 1) fetch the reservations FIRST (pure SQL)
+        var spans = await _context.Reservations
+            .AsNoTracking()
+            .Where(r => r.PropertyId == id)
+            .Select(r => new { r.StartDate, r.EndDate })   // simple columns = translatable
+            .ToListAsync();
+
+        // 2) build the individual dates **in-memory**
+        var busy = new List<DateTime>();
+        foreach (var s in spans)
+            for (var d = s.StartDate.Date; d <= s.EndDate.Date; d = d.AddDays(1))
+                busy.Add(d);
+
+        return Ok(busy);
+    }
     // Get properties for a specific user by their userId
     [HttpGet("mes-annonces/{userId}")]
     public async Task<IActionResult> GetMesAnnonces(int userId)

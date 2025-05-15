@@ -8,6 +8,7 @@ using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
+using Microsoft.AspNetCore.Authorization;
 
 namespace Darna.Controllers
 {
@@ -23,7 +24,7 @@ namespace Darna.Controllers
             _configuration = configuration;
             _context = context;
         }
-
+        [AllowAnonymous]
         [HttpPost("signup")]
         public async Task<IActionResult> Register([FromBody] RegisterDto registerDto)
         {
@@ -61,6 +62,7 @@ namespace Darna.Controllers
 
             return Ok(new { message = "Inscription réussie !" });
         }
+        [AllowAnonymous]
         [HttpPost("login")]
         public async Task<IActionResult> Login([FromBody] LoginDto loginDto)
         {

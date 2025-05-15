@@ -5,7 +5,7 @@ body {
   min-height: 100vh;
   background:
     linear-gradient(rgba(0, 0, 0, .35), rgba(0, 0, 0, .35)),   /* dark veil */
-    url('assets/darna-bg-wide.png') center/contain no-repeat;         /* hero img  */
+    url('assets/darna-bg-wide.png') center/cover no-repeat;         /* hero img  */
   background-attachment: fixed;
   color: #fff;          /* default text colour – override per‑section if needed */
 }
@@ -111,3 +111,6 @@ app-root {
 app-footer {
   flex-shrink: 0;
 }
+
+html, body { height: 100%; }
+body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }

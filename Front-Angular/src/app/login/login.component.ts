@@ -3,15 +3,12 @@ import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angula
 import { CommonModule } from '@angular/common';
 import { AuthService } from '../Services/auth.service';
 import { Router, RouterModule } from '@angular/router';
-import {FooterComponent} from '../shared/footer/footer.component';
-import {ClientNavbarComponent} from '../shared/client-navbar/client-navbar.component';
-import {PropNavbarComponent} from '../shared/prop-navbar/prop-navbar.component';
-import {StandardNavbarComponent} from '../shared/standard-navbar/standard-navbar.component'; // ✅ Import du Router
+
 
 @Component({
   selector: 'app-login',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, RouterModule,StandardNavbarComponent],
+  imports: [CommonModule, ReactiveFormsModule, RouterModule],
   templateUrl: './login.component.html',
   styleUrls: ['./login.component.css']
 })

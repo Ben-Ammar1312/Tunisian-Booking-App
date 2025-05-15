@@ -3,7 +3,6 @@ import { Router } from '@angular/router';
 import { AuthService } from '../Services/auth.service';
 
 import { NgIf } from '@angular/common';
-import { StandardNavbarComponent } from '../shared/standard-navbar/standard-navbar.component';
 import { PropNavbarComponent }     from '../shared/prop-navbar/prop-navbar.component';
 import { ClientNavbarComponent }   from '../shared/client-navbar/client-navbar.component';
 import { FooterComponent }         from '../shared/footer/footer.component';
@@ -15,7 +14,6 @@ import { FooterComponent }         from '../shared/footer/footer.component';
   styleUrls:   ['./home.component.css'],   // optional; could remove if empty
   imports: [
     NgIf,
-    StandardNavbarComponent,
     PropNavbarComponent,
     ClientNavbarComponent,
   ]

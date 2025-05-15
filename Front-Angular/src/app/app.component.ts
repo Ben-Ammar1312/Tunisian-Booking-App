@@ -6,6 +6,11 @@ import { AuthService }       from './Services/auth.service';
 import { FooterComponent }   from './shared/footer/footer.component';
 import { ChatWidgetComponent } from './chat-widget/chat-widget.component';
 
+import { MatDatepickerModule }  from '@angular/material/datepicker';
+import { MatInputModule }       from '@angular/material/input';
+import { MatNativeDateModule }  from '@angular/material/core';
+import { MatFormFieldModule }   from '@angular/material/form-field';
+
 @Component({
   selector:    'app-root',
   standalone:  true,
@@ -13,7 +18,11 @@ import { ChatWidgetComponent } from './chat-widget/chat-widget.component';
     RouterOutlet,
     CommonModule,          // gives *ngIf, *ngFor, etc.
     FooterComponent,
-    ChatWidgetComponent
+    ChatWidgetComponent,
+    MatDatepickerModule,
+    MatInputModule,
+    MatNativeDateModule,
+    MatFormFieldModule
   ],
   templateUrl: './app.component.html'
 })
