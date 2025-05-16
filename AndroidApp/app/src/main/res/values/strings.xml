@@ -1,6 +1,9 @@
 <resources>
     <string name="app_name">Darna</string>
-    <string name="api_base_url">http://10.0.2.2:5058/api</string>
+    <string name="api_base_url">http://192.168.53.63:5058/api</string>
+    <string name="ajouter_une_annonce">Ajouter Une Annonce</string>
+    <string name="d_connexion">Déconnexion</string>
+    <string name="chat">Chat IA</string>
     <string-array name="role_array">
         <item>Propriétaire</item>
         <item>Client</item>

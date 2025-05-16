@@ -1,5 +1,6 @@
 package com.example.darna;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
@@ -35,6 +36,7 @@ public class HomeActivity extends AppCompatActivity
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_home);
+
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
@@ -61,17 +63,44 @@ public class HomeActivity extends AppCompatActivity
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         if (item.getItemId() == R.id.action_chat) {
-            // launch the chat screen
             startActivity(new Intent(this, ChatActivity.class));
             return true;
+
+        } else if (item.getItemId() == R.id.action_add_annonce) {
+            startActivity(new Intent(this, AjoutAnnonceActivity.class));
+            return true;
+
+        } else if (item.getItemId() == R.id.action_logout) {
+            // Cancel all pending fetches
+            VolleySingleton.getInstance(this).getRequestQueue().cancelAll("FETCH_TAG");
+
+            // Clear saved user data
+            SharedPreferences sharedPreferences = getSharedPreferences("MyAppPrefs", MODE_PRIVATE);
+            SharedPreferences.Editor editor = sharedPreferences.edit();
+            editor.clear();
+            editor.apply();
+
+            Toast.makeText(this, "Déconnecté", Toast.LENGTH_SHORT).show();
+
+            // Redirect to MainActivity
+            Intent intent = new Intent(this, MainActivity.class);
+            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+            startActivity(intent);
+            finish();
+            return true;
         }
+
+
         return super.onOptionsItemSelected(item);
     }
+
     private void fetchProperties() {
         String url = getString(R.string.api_base_url) + "/property";
         JsonArrayRequest req = new JsonArrayRequest(url,
                 this::onResponse, this::onError);
         req.setRetryPolicy(new DefaultRetryPolicy(15000,1,1f));
+        req.setTag("FETCH_TAG");
+
         VolleySingleton.getInstance(this)
                 .getRequestQueue()
                 .add(req);
@@ -95,9 +124,12 @@ public class HomeActivity extends AppCompatActivity
     }
 
     private void onError(VolleyError e) {
-        Log.e("HOME_FETCH","error",e);
-        Toast.makeText(this,"Fetch failed",Toast.LENGTH_SHORT).show();
+        if (!isFinishing()) {
+            Log.e("HOME_FETCH", "error", e);
+            Toast.makeText(this, "Fetch failed", Toast.LENGTH_SHORT).show();
+        }
     }
+
 
     @Override  // from SearchFragment
     public void onSearch(String query) {

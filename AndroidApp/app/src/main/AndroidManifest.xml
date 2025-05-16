@@ -26,6 +26,8 @@
         <activity android:name=".ChatActivity"
             android:exported="true" />
         <activity android:name=".RegisterActivity" />
+        <activity android:name=".AjoutAnnonceActivity" />
+
         <activity
             android:name=".MainActivity"
             android:exported="true">
