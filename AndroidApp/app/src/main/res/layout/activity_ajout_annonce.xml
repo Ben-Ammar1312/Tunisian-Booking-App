@@ -1,19 +1,86 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:padding="16dp">
 
-    <!-- Placeholder content -->
-    <TextView
-        android:id="@+id/textAjout"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Ajout Annonce Page"
-        android:textSize="20sp"
-        android:layout_marginTop="32dp"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"/>
-</androidx.constraintlayout.widget.ConstraintLayout>
+    <LinearLayout
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <!-- Nom -->
+        <EditText
+            android:id="@+id/etName"
+            android:hint="Nom de l'annonce"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+
+        <!-- Localisation -->
+        <EditText
+            android:id="@+id/etLocation"
+            android:hint="Localisation"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+
+        <!-- Description -->
+        <EditText
+            android:id="@+id/etDescription"
+            android:hint="Description"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:minLines="3"
+            android:gravity="top"
+            android:inputType="textMultiLine" />
+
+        <!-- Prix par nuit -->
+        <EditText
+            android:id="@+id/etPrice"
+            android:hint="Prix par nuit (TND)"
+            android:inputType="numberDecimal"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+
+        <!-- Type -->
+        <EditText
+            android:id="@+id/etType"
+            android:hint="Type (Appartement, Villa, etc.)"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+
+        <!-- Image URLs (temporaire) -->
+        <EditText
+            android:id="@+id/etImages"
+            android:hint="URLs des images (séparées par virgule)"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+
+        <!-- Commodités (Switches ou CheckBoxes) -->
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Commodités :"
+            android:textStyle="bold"
+            android:paddingTop="12dp" />
+
+        <CheckBox android:id="@+id/cbWifi" android:text="Wi-Fi"
+            android:layout_width="wrap_content" android:layout_height="wrap_content"/>
+        <CheckBox android:id="@+id/cbPool" android:text="Piscine"
+            android:layout_width="wrap_content" android:layout_height="wrap_content"/>
+        <CheckBox android:id="@+id/cbKitchen" android:text="Cuisine"
+            android:layout_width="wrap_content" android:layout_height="wrap_content"/>
+        <CheckBox android:id="@+id/cbPetsAllowed" android:text="Animaux autorisés"
+            android:layout_width="wrap_content" android:layout_height="wrap_content"/>
+        <CheckBox android:id="@+id/cbSmokeAlarm" android:text="Détecteur de fumée"
+            android:layout_width="wrap_content" android:layout_height="wrap_content"/>
+
+        <!-- Bouton d'ajout -->
+        <Button
+            android:id="@+id/btnAjouterAnnonce"
+            android:text="Ajouter l'annonce"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp" />
+
+    </LinearLayout>
+</ScrollView>
