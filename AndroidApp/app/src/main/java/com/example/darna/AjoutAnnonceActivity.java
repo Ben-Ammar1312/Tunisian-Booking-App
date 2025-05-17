@@ -27,8 +27,8 @@ public class AjoutAnnonceActivity extends AppCompatActivity {
         etLocation = findViewById(R.id.etLocation);
         etDescription = findViewById(R.id.etDescription);
         etPrice = findViewById(R.id.etPrice);
-        etImageUrl = findViewById(R.id.etImageUrl);
-        btnSubmit = findViewById(R.id.btnSubmit);
+        etImageUrl = findViewById(R.id.etImages);
+        btnSubmit = findViewById(R.id.btnAjouterAnnonce);
 
         btnSubmit.setOnClickListener(v -> ajouterAnnonce());
     }
