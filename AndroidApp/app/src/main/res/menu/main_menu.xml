@@ -9,12 +9,6 @@
         android:title="@string/chat"
         app:showAsAction="never" />
 
-    <!-- Ajouter Une Annonce -->
-    <item
-        android:id="@+id/action_add_annonce"
-        android:icon="@drawable/ic_add"
-        android:title="@string/ajouter_une_annonce"
-        app:showAsAction="never" />
 
     <!-- Déconnexion -->
     <item

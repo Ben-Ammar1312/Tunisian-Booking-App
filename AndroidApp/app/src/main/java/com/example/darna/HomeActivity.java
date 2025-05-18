@@ -24,7 +24,9 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class HomeActivity extends AppCompatActivity
         implements SearchFragment.SearchListener {
@@ -66,9 +68,7 @@ public class HomeActivity extends AppCompatActivity
             startActivity(new Intent(this, ChatActivity.class));
             return true;
 
-        } else if (item.getItemId() == R.id.action_add_annonce) {
-            startActivity(new Intent(this, AjoutAnnonceActivity.class));
-            return true;
+
 
         } else if (item.getItemId() == R.id.action_logout) {
             // Cancel all pending fetches
@@ -96,42 +96,20 @@ public class HomeActivity extends AppCompatActivity
 
     private void fetchProperties() {
         String url = getString(R.string.api_base_url) + "/property";
-        JsonArrayRequest req = new JsonArrayRequest(url,
-                this::onResponse, this::onError);
+        JsonArrayRequest req = new JsonArrayRequest(url, this::onResponse, this::onError) {
+            @Override
+            public Map<String, String> getHeaders() {
+                Map<String, String> headers = new HashMap<>();
+                String token = getJwtToken();
+                if (token != null) headers.put("Authorization", "Bearer " + token);
+                return headers;
+            }
+        };
         req.setRetryPolicy(new DefaultRetryPolicy(15000,1,1f));
-        req.setTag("FETCH_TAG");
-
-        VolleySingleton.getInstance(this)
-                .getRequestQueue()
-                .add(req);
+        VolleySingleton.getInstance(this).getRequestQueue().add(req);
     }
 
-    private void onResponse(JSONArray arr) {
-        list.clear();
-        for (int i=0; i<arr.length(); i++) {
-            JSONObject o = arr.optJSONObject(i);
-            if (o==null) continue;
-            Property p = new Property();
-            p.id            = o.optInt("id");
-            p.name          = o.optString("name");
-            p.location      = o.optString("location");
-            p.pricePerNight = o.optDouble("pricePerNight");
-            p.firstImage    = o.optString("firstImage", null);
-            list.add(p);
-        }
-        adapter.submitList(list);
-        Log.d("HOME_FETCH","fetched "+list.size());
-    }
-
-    private void onError(VolleyError e) {
-        if (!isFinishing()) {
-            Log.e("HOME_FETCH", "error", e);
-            Toast.makeText(this, "Fetch failed", Toast.LENGTH_SHORT).show();
-        }
-    }
-
-
-    @Override  // from SearchFragment
+    @Override
     public void onSearch(String query) {
         if (query.isEmpty()) {
             adapter.submitList(list);
@@ -162,16 +140,52 @@ public class HomeActivity extends AppCompatActivity
                             "Recherche échouée: "+err.getMessage(),
                             Toast.LENGTH_SHORT).show();
                 }
-        );
-        VolleySingleton.getInstance(this)
-                .getRequestQueue()
-                .add(req);
+        ) {
+            @Override
+            public Map<String, String> getHeaders() {
+                Map<String, String> headers = new HashMap<>();
+                String token = getJwtToken();
+                if (token != null) headers.put("Authorization", "Bearer " + token);
+                return headers;
+            }
+        };
+        VolleySingleton.getInstance(this).getRequestQueue().add(req);
     }
+
+    private void onResponse(JSONArray arr) {
+        list.clear();
+        for (int i=0; i<arr.length(); i++) {
+            JSONObject o = arr.optJSONObject(i);
+            if (o==null) continue;
+            Property p = new Property();
+            p.id            = o.optInt("id");
+            p.name          = o.optString("name");
+            p.location      = o.optString("location");
+            p.pricePerNight = o.optDouble("pricePerNight");
+            p.firstImage    = o.optString("firstImage", null);
+            list.add(p);
+        }
+        adapter.submitList(list);
+        Log.d("HOME_FETCH","fetched "+list.size());
+    }
+
+    private void onError(VolleyError e) {
+        if (!isFinishing()) {
+            Log.e("HOME_FETCH", "error", e);
+            Toast.makeText(this, "Fetch failed", Toast.LENGTH_SHORT).show();
+        }
+    }
+
+
 
     private void openDetails(Property p) {
         Intent i = new Intent(this, PropertyDetailsActivity.class);
         i.putExtra("propertyId", p.id);
         startActivity(i);
+    }
+    private String getJwtToken() {
+        return getSharedPreferences("MyAppPrefs", MODE_PRIVATE)
+                .getString("token", null);
     }
 
 

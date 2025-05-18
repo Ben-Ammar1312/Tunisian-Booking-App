@@ -14,6 +14,9 @@ import com.example.darna.dto.ChatMessage;
 
 import org.json.JSONException;
 
+import java.util.HashMap;
+import java.util.Map;
+
 public class ChatActivity extends AppCompatActivity {
 
     private ChatAdapter adapter;
@@ -53,7 +56,19 @@ public class ChatActivity extends AppCompatActivity {
                 },
                 err -> adapter.add(new ChatMessage(ChatMessage.Role.BOT,
                         "Désolé, je n’ai pas compris…"))
-        );
+        ) {
+            @Override
+            public Map<String, String> getHeaders() {
+                Map<String, String> headers = new HashMap<>();
+                String token = getJwtToken();
+                if (token != null) headers.put("Authorization", "Bearer " + token);
+                return headers;
+            }
+        };
         VolleySingleton.get(this).addToRequestQueue(req);
+    }
+    private String getJwtToken() {
+        return getSharedPreferences("MyAppPrefs", MODE_PRIVATE)
+                .getString("token", null);
     }
 }

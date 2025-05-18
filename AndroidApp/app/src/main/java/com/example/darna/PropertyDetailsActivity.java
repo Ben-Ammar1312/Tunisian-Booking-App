@@ -18,7 +18,9 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class PropertyDetailsActivity extends AppCompatActivity {
 
@@ -48,12 +50,19 @@ public class PropertyDetailsActivity extends AppCompatActivity {
 
     private void fetchPropertyDetails(int id) {
         String url = getString(R.string.api_base_url) + "/property/" + id;
-
         JsonObjectRequest req = new JsonObjectRequest(
                 Request.Method.GET, url, null,
                 this::onResponse,
                 err -> Log.e("DETAILS_ERR", err.toString())
-        );
+        ) {
+            @Override
+            public Map<String, String> getHeaders() {
+                Map<String, String> headers = new HashMap<>();
+                String token = getJwtToken();
+                if (token != null) headers.put("Authorization", "Bearer " + token);
+                return headers;
+            }
+        };
 
         req.setRetryPolicy(new DefaultRetryPolicy(15_000, 1, 1f));
         VolleySingleton.getInstance(this).getRequestQueue().add(req);
@@ -82,5 +91,10 @@ public class PropertyDetailsActivity extends AppCompatActivity {
         } catch (Exception e) {
             Log.e("DETAILS_PARSE", "error", e);
         }
+    }
+
+    private String getJwtToken() {
+        return getSharedPreferences("MyAppPrefs", MODE_PRIVATE)
+                .getString("token", null);
     }
 }
